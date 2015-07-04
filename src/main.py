@@ -45,7 +45,6 @@ class Sigurd(ShowBase):
         vfov = 70
         aspect = self.camLens.get_aspect_ratio()
         hfov = math.degrees(2 * math.atan(math.tan(math.radians(vfov)/2.0) * aspect))
-        print(hfov)
         self.camLens.setFov(hfov, vfov)
 
 if __name__ == '__main__':
