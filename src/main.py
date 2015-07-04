@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+import math
 import sys
 
 from direct.showbase.ShowBase import ShowBase
@@ -36,9 +37,16 @@ class Sigurd(ShowBase):
         self.ecsmanager.add_entity(level)
 
         PlayerController(self.camera)
-        self.camLens.setFov(90)
 
         self.accept('escape-up', sys.exit)
+        self.accept('aspectRatioChanged', self.cb_resize)
+
+    def cb_resize(self):
+        vfov = 70
+        aspect = self.camLens.get_aspect_ratio()
+        hfov = math.degrees(2 * math.atan(math.tan(math.radians(vfov)/2.0) * aspect))
+        print(hfov)
+        self.camLens.setFov(hfov, vfov)
 
 if __name__ == '__main__':
     app = Sigurd()
