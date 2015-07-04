@@ -1,4 +1,6 @@
 #!/usr/bin/env python2
+import sys
+
 from direct.showbase.ShowBase import ShowBase
 import panda3d.core as p3d
 
@@ -35,6 +37,8 @@ class Sigurd(ShowBase):
 
         PlayerController(self.camera)
         self.camLens.setFov(90)
+
+        self.accept('escape-up', sys.exit)
 
 if __name__ == '__main__':
     app = Sigurd()
