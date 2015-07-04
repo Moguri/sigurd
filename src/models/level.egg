@@ -1,0 +1,66 @@
+<CoordinateSystem> { Z-up }
+<Material> ground {
+  <Scalar> diffr { 0.640000 }
+  <Scalar> diffg { 0.640000 }
+  <Scalar> diffb { 0.640000 }
+  <Scalar> specr { 0.500000 }
+  <Scalar> specg { 0.500000 }
+  <Scalar> specb { 0.500000 }
+  <Scalar> shininess { 12.5 }
+  <Scalar> ambr { 1.000000 }
+  <Scalar> ambg { 1.000000 }
+  <Scalar> ambb { 1.000000 }
+  <Scalar> emitr { 0.000000 }
+  <Scalar> emitg { 0.000000 }
+  <Scalar> emitb { 0.000000 }
+}
+
+<Texture> Texture {
+  "./textures/ground.png"
+  <Scalar> envtype { MODULATE }
+  <Scalar> minfilter { LINEAR_MIPMAP_LINEAR }
+  <Scalar> magfilter { LINEAR_MIPMAP_LINEAR }
+  <Scalar> wrap { REPEAT }
+}
+
+  <Group> Plane {
+    <Transform> {
+      <Matrix4> {
+        1.0 0.0 0.0 0.0
+        0.0 1.0 0.0 0.0
+        0.0 0.0 1.0 0.0
+        0.0 0.0 0.0 1.0
+      }
+    }
+
+    <VertexPool> Plane {
+
+      <Vertex> 0 {-10.000000 -10.000000 0.000000
+        <UV>  {
+          9.998000314226374e-05 0.00010017070599133149
+        }
+      }
+      <Vertex> 1 {10.000000 -10.000000 0.000000
+        <UV>  {
+          0.9999000430107117 9.998000314226374e-05
+        }
+      }
+      <Vertex> 2 {10.000000 10.000000 0.000000
+        <UV>  {
+          0.9999000430107117 0.9998998641967773
+        }
+      }
+      <Vertex> 3 {-10.000000 10.000000 0.000000
+        <UV>  {
+          0.00010036140156444162 0.9998998641967773
+        }
+      }}
+
+
+    <Polygon> {
+      <TRef> { Texture }
+      <MRef> { ground }
+      <Normal> {0.000000 0.000000 1.000000}
+      <VertexRef> { 0 1 2 3 <Ref> { Plane }}
+    }
+  }
