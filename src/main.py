@@ -6,7 +6,7 @@ from direct.showbase.ShowBase import ShowBase
 import panda3d.core as p3d
 
 import ecs
-from player import PlayerController, CharacterComponent, PlayerSystem
+from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterSystem
 
 class NodePathComponent(ecs.Component):
     __slots__ = [
@@ -34,6 +34,7 @@ class Sigurd(ShowBase):
     
         self.ecsmanager = ecs.ECSManager()
         self.ecsmanager.add_system(PlayerSystem())
+        self.ecsmanager.add_system(CharacterSystem())
         def run_ecs(task):
             self.ecsmanager.update(0)
             return task.cont
@@ -53,6 +54,7 @@ class Sigurd(ShowBase):
         base.camera.set_pos(0, 0, 1.7)
         player.add_component(np_component)
         player.add_component(CharacterComponent())
+        player.add_component(PlayerComponent())
         self.ecsmanager.add_entity(player)
 
         self.accept('escape-up', sys.exit)

@@ -4,10 +4,15 @@ import panda3d.core as p3d
 import ecs
 
 
+def clamp(value, lower, upper):
+    return max(min(value, upper), lower)
+
+
 class CharacterComponent(ecs.Component):
     __slots__ = [
         "speed",
         "movement",
+        "heading_delta",
     ]
 
     typeid = "CHARACTER"
@@ -15,21 +20,42 @@ class CharacterComponent(ecs.Component):
     def __init__(self):
         self.speed = p3d.LVector3f(0.04, 0.04, 0.0)
         self.movement = p3d.LVector3f(0, 0, 0)
+        self.heading_delta = 0
+
+class PlayerComponent(ecs.Component):
+    typeid = "PLAYER"
 
 
-def clamp(value, lower, upper):
-    return max(min(value, upper), lower)
+class CharacterSystem(ecs.System):
+    component_types = [
+        "CHARACTER",
+    ]
+
+    def update(self, dt, components):
+        for char in components['CHARACTER']:
+            nodepath = char.entity.get_component('NODEPATH').nodepath
+
+            # Position
+            new_pos = nodepath.getMat(base.render).xformVec(char.movement)
+            new_pos.normalize()
+            new_pos.componentwiseMult(char.speed)
+            new_pos += nodepath.get_pos()
+            nodepath.set_pos(new_pos)
+
+            # Rotation
+            heading = nodepath.get_h() + char.heading_delta
+            nodepath.set_h(heading)
+            char.heading_delta = 0
 
 
 class PlayerSystem(ecs.System, DirectObject):
     component_types = [
-        "CHARACTER",
+        "PLAYER",
     ]
 
     def __init__(self):
         self.movement = p3d.LVector3f(0, 0, 0)
         self.camera_pitch = 0
-        self.camera_heading = 0
         self.mousex_sensitivity = 25
         self.mousey_sensitivity = 25
 
@@ -60,29 +86,19 @@ class PlayerSystem(ecs.System, DirectObject):
         self.movement += move_delta
 
     def update(self, dt, components):
-        for char in components['CHARACTER']:
-            nodepath = char.entity.get_component('NODEPATH').nodepath
+        player = list(components['PLAYER'])[0]
+        pc = player.entity.get_component('CHARACTER')
+        pc.movement = self.movement
+        if base.mouseWatcherNode.has_mouse():
+            mouse = base.mouseWatcherNode.get_mouse()
+            halfx = base.win.get_x_size() / 2
+            halfy = base.win.get_y_size() / 2
+            base.win.move_pointer(0, halfx, halfy)
 
-            # Position
-            new_pos = nodepath.getMat(base.render).xformVec(self.movement)
-            new_pos.normalize()
-            new_pos.componentwiseMult(char.speed)
-            new_pos += nodepath.get_pos()
-            nodepath.set_pos(new_pos)
+            self.camera_pitch += mouse.y * self.mousey_sensitivity
+            self.camera_pitch = clamp(self.camera_pitch, -75, 75)
 
-            # Rotation
-            if base.mouseWatcherNode.has_mouse():
-                mouse = base.mouseWatcherNode.get_mouse()
-                halfx = base.win.get_x_size() / 2
-                halfy = base.win.get_y_size() / 2
-                base.win.move_pointer(0, halfx, halfy)
+            pc.heading_delta += -mouse.x * self.mousex_sensitivity
 
-                self.camera_pitch += mouse.y * self.mousey_sensitivity
-                self.camera_pitch = clamp(self.camera_pitch, -75, 75)
-
-                self.camera_heading += -mouse.x * self.mousex_sensitivity
-
-            nodepath.set_h(self.camera_heading)
-            base.camera.set_p(self.camera_pitch)
-
+        base.camera.set_p(self.camera_pitch)
 
