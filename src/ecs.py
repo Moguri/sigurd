@@ -1,6 +1,7 @@
 import weakref
 import itertools
 
+
 class Component(object):
     __slots__ = [
         '_entity',
@@ -10,6 +11,7 @@ class Component(object):
     @property
     def entity(self):
         return self._entity()
+
 
 class Entity(object):
     __slots__ = [
@@ -38,8 +40,9 @@ class System(object):
         'component_types',
     ]
 
-    def update(dt, entities):
+    def update(self, dt, entities):
         pass
+
 
 class ECSManager(object):
     def __init__(self):
@@ -64,4 +67,3 @@ class ECSManager(object):
             components = dict(itertools.groupby(components, lambda x: x.typeid))
 
             system.update(dt, components)
-

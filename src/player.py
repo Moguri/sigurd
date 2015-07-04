@@ -22,6 +22,7 @@ class CharacterComponent(ecs.Component):
         self.movement = p3d.LVector3f(0, 0, 0)
         self.heading_delta = 0
 
+
 class PlayerComponent(ecs.Component):
     __slots__ = []
     typeid = 'PLAYER'
@@ -102,4 +103,3 @@ class PlayerSystem(ecs.System, DirectObject):
             pc.heading_delta += -mouse.x * self.mousex_sensitivity
 
         base.camera.set_p(self.camera_pitch)
-

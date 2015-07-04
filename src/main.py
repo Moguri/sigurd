@@ -8,6 +8,7 @@ import panda3d.core as p3d
 import ecs
 from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterSystem
 
+
 class NodePathComponent(ecs.Component):
     __slots__ = [
         'nodepath',
@@ -35,6 +36,7 @@ class Sigurd(ShowBase):
         self.ecsmanager = ecs.ECSManager()
         self.ecsmanager.add_system(PlayerSystem())
         self.ecsmanager.add_system(CharacterSystem())
+
         def run_ecs(task):
             self.ecsmanager.update(0)
             return task.cont
@@ -45,7 +47,6 @@ class Sigurd(ShowBase):
         np_component.nodepath.reparent_to(base.render)
         level.add_component(np_component)
         self.ecsmanager.add_entity(level)
-
 
         player = ecs.Entity()
         np_component = NodePathComponent()
