@@ -20,6 +20,7 @@
   <Scalar> envtype { MODULATE }
   <Scalar> minfilter { LINEAR_MIPMAP_LINEAR }
   <Scalar> magfilter { LINEAR_MIPMAP_LINEAR }
+  <Scalar> anisotropic-degree { 4 }
   <Scalar> wrap { REPEAT }
 }
 
