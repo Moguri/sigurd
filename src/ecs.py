@@ -14,6 +14,7 @@ class Component(object):
 class Entity(object):
     __slots__ = [
         "_components",
+        "__weakref__",
     ]
 
     def __init__(self):
@@ -22,7 +23,7 @@ class Entity(object):
     def add_component(self, component):
         if component.typeid in self._components:
             raise RuntimeError("Entity already has component of with typeid of {}".format(component.typeid))
-        component.entity = weakref.ref(self)
+        component._entity = weakref.ref(self)
         self._components[component.typeid] = component
 
     def remove_component(self, component):
@@ -59,8 +60,8 @@ class ECSManager(object):
 
     def update(self, dt):
         for system in self.systems:
-            components = [component for entity in self.entities for component in self.entities._components if component.typeid in system.component_types]
-            components = dict(itertools.groupby(entities, lambda x: x.typeid))
+            components = [component for entity in self.entities for component in entity._components.values() if component.typeid in system.component_types]
+            components = dict(itertools.groupby(components, lambda x: x.typeid))
 
             system.update(dt, components)
 

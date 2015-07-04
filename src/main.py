@@ -13,6 +13,8 @@ class NodePathComponent(ecs.Component):
         "nodepath",
     ]
 
+    typeid = 'NODEPATH'
+
     def __init__(self, modelpath=None):
         if modelpath is not None:
             self.nodepath = base.loader.loadModel(modelpath)
@@ -33,12 +35,13 @@ class Sigurd(ShowBase):
         self.ecsmanager = ecs.ECSManager()
         def run_ecs(task):
             self.ecsmanager.update(0)
-            task.cont
+            return task.cont
         self.taskMgr.add(run_ecs, 'ECS')
 
         level = ecs.Entity()
         np_component = NodePathComponent('models/level')
         np_component.nodepath.reparent_to(base.render)
+        level.add_component(np_component)
         self.ecsmanager.add_entity(level)
 
         PlayerController(self.camera)
