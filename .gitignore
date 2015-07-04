@@ -54,3 +54,6 @@ target/
 
 # Vim swap files
 *.swp
+
+# PyCharm files
+.idea
