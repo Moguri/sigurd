@@ -10,7 +10,7 @@ from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterS
 
 class NodePathComponent(ecs.Component):
     __slots__ = [
-        "nodepath",
+        'nodepath',
     ]
 
     typeid = 'NODEPATH'

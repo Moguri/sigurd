@@ -3,8 +3,8 @@ import itertools
 
 class Component(object):
     __slots__ = [
-        "_entity",
-        "typeid",
+        '_entity',
+        'typeid',
     ]
 
     @property
@@ -13,8 +13,8 @@ class Component(object):
 
 class Entity(object):
     __slots__ = [
-        "_components",
-        "__weakref__",
+        '_components',
+        '__weakref__',
     ]
 
     def __init__(self):
@@ -22,7 +22,7 @@ class Entity(object):
 
     def add_component(self, component):
         if component.typeid in self._components:
-            raise RuntimeError("Entity already has component of with typeid of {}".format(component.typeid))
+            raise RuntimeError('Entity already has component of with typeid of {}'.format(component.typeid))
         component._entity = weakref.ref(self)
         self._components[component.typeid] = component
 
@@ -35,7 +35,7 @@ class Entity(object):
 
 class System(object):
     __slots__ = [
-        "component_types",
+        'component_types',
     ]
 
     def update(dt, entities):

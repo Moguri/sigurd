@@ -10,12 +10,12 @@ def clamp(value, lower, upper):
 
 class CharacterComponent(ecs.Component):
     __slots__ = [
-        "speed",
-        "movement",
-        "heading_delta",
+        'speed',
+        'movement',
+        'heading_delta',
     ]
 
-    typeid = "CHARACTER"
+    typeid = 'CHARACTER'
 
     def __init__(self):
         self.speed = p3d.LVector3f(0.04, 0.04, 0.0)
@@ -23,12 +23,13 @@ class CharacterComponent(ecs.Component):
         self.heading_delta = 0
 
 class PlayerComponent(ecs.Component):
-    typeid = "PLAYER"
+    __slots__ = []
+    typeid = 'PLAYER'
 
 
 class CharacterSystem(ecs.System):
     component_types = [
-        "CHARACTER",
+        'CHARACTER',
     ]
 
     def update(self, dt, components):
@@ -50,7 +51,7 @@ class CharacterSystem(ecs.System):
 
 class PlayerSystem(ecs.System, DirectObject):
     component_types = [
-        "PLAYER",
+        'PLAYER',
     ]
 
     def __init__(self):
