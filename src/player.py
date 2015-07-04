@@ -3,7 +3,7 @@ import panda3d.core as p3d
 
 
 class PlayerController(DirectObject):
-    SPEED = p3d.LVector3f(0.1, 0.2, 0.0)
+    SPEED = p3d.LVector3f(0.04, 0.04, 0.0)
 
     def __init__(self, camera):
         self.camera = camera

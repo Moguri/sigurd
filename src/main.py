@@ -34,6 +34,7 @@ class Sigurd(ShowBase):
         self.ecsmanager.add_entity(level)
 
         PlayerController(self.camera)
+        self.camLens.setFov(90)
 
 if __name__ == '__main__':
     app = Sigurd()
