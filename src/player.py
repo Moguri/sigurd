@@ -2,6 +2,10 @@ from direct.showbase.DirectObject import DirectObject
 import panda3d.core as p3d
 
 
+def clamp(value, lower, upper):
+    return max(min(value, upper), lower)
+
+
 class PlayerController(DirectObject):
     SPEED = p3d.LVector3f(0.04, 0.04, 0.0)
 
@@ -12,6 +16,10 @@ class PlayerController(DirectObject):
         self.camera.set_pos(0, 0, 1.7)
 
         self.movement = p3d.LVector3f(0, 0, 0)
+        self.camera_pitch = 0
+        self.camera_heading = 0
+        self.mousex_sensitivity = 25
+        self.mousey_sensitivity = 25
 
         self.accept('w', self.update_movement, ['forward', True])
         self.accept('w-up', self.update_movement, ['forward', False])
@@ -42,11 +50,26 @@ class PlayerController(DirectObject):
         self.movement += move_delta
 
     def update(self, task):
-        new_pos = p3d.LVector3f(self.movement)
+        # Position
+        new_pos = self.node_path.getMat(base.render).xformVec(self.movement)
         new_pos.normalize()
         new_pos.componentwiseMult(self.SPEED)
         new_pos += self.node_path.get_pos()
-
         self.node_path.set_pos(new_pos)
+
+        # Rotation
+        if base.mouseWatcherNode.has_mouse():
+            mouse = base.mouseWatcherNode.get_mouse()
+            halfx = base.win.get_x_size() / 2
+            halfy = base.win.get_y_size() / 2
+            base.win.move_pointer(0, halfx, halfy)
+
+            self.camera_pitch += mouse.y * self.mousey_sensitivity
+            self.camera_pitch = clamp(self.camera_pitch, -75, 75)
+
+            self.camera_heading += -mouse.x * self.mousex_sensitivity
+
+        self.node_path.set_h(self.camera_heading)
+        self.camera.set_p(self.camera_pitch)
 
         return task.cont

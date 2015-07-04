@@ -23,6 +23,11 @@ class NodePathComponent(ecs.Component):
 class Sigurd(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
+
+        wp = p3d.WindowProperties()
+        wp.set_cursor_hidden(True)
+        wp.set_mouse_mode(p3d.WindowProperties.MRelative)
+        base.win.requestProperties(wp)
         self.disableMouse()
     
         self.ecsmanager = ecs.ECSManager()
