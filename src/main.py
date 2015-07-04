@@ -30,6 +30,8 @@ class Sigurd(ShowBase):
         wp = p3d.WindowProperties()
         wp.set_cursor_hidden(True)
         wp.set_mouse_mode(p3d.WindowProperties.MRelative)
+        wp.set_size(1920, 1080)
+        wp.set_fullscreen(True)
         base.win.requestProperties(wp)
         self.disableMouse()
     
@@ -53,6 +55,7 @@ class Sigurd(ShowBase):
         np_component.nodepath.reparent_to(base.render)
         base.camera.reparent_to(np_component.nodepath)
         base.camera.set_pos(0, 0, 1.7)
+        base.camLens.set_near(0.1)
         player.add_component(np_component)
         player.add_component(CharacterComponent())
         player.add_component(PlayerComponent())
@@ -62,7 +65,7 @@ class Sigurd(ShowBase):
         self.accept('aspectRatioChanged', self.cb_resize)
 
     def cb_resize(self):
-        vfov = 70
+        vfov = 90
         aspect = self.camLens.get_aspect_ratio()
         hfov = math.degrees(2 * math.atan(math.tan(math.radians(vfov)/2.0) * aspect))
         self.camLens.setFov(hfov, vfov)
