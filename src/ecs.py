@@ -78,7 +78,7 @@ class ECSManager(object):
 
     def _get_components_by_type(self, component_types):
         components = [component for entity in self.entities for component in entity._components.values() if component.typeid in component_types]
-        components = dict(itertools.groupby(components, lambda x: x.typeid))
+        components = {k: list(g) for k, g in itertools.groupby(components, lambda x: x.typeid)}
 
         return components
 
