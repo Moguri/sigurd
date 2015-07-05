@@ -3,6 +3,7 @@ import math
 import sys
 
 from direct.showbase.ShowBase import ShowBase
+from direct.actor.Actor import Actor
 import panda3d.core as p3d
 
 import ecs
@@ -69,8 +70,12 @@ class Sigurd(ShowBase):
         self.ecsmanager.add_entity(player)
 
         #TODO: ECS
-        np_weapon = self.loader.loadModel('models/katana')
-        np_weapon.reparent_to(np_component.nodepath)
+        self.weapon = Actor('models/katana')
+        def play_attack():
+            if not self.weapon.getAnimControl('attack').isPlaying():
+                self.weapon.play('attack', fromFrame=1, toFrame=21)
+        self.weapon.reparent_to(np_component.nodepath)
+        self.accept('mouse1', play_attack)
 
         self.accept('escape-up', sys.exit)
         self.accept('aspectRatioChanged', self.cb_resize)
