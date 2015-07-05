@@ -76,19 +76,19 @@ class ECSManager(object):
     def remove_system(self, system):
         self.systems.remove(system)
 
-    def _get_components_by_type(self, component_types):
-        components = [component for entity in self.entities for component in entity._components.values() if component.typeid in component_types]
+    def _get_components_by_type(self, component_list, component_types):
+        components = [component for entity in self.entities for component in getattr(entity, component_list).values() if component.typeid in component_types]
         components = {k: list(g) for k, g in itertools.groupby(components, lambda x: x.typeid)}
 
         return components
 
     def update(self, dt):
         for system in self.systems:
-            system.init_components(dt, self._get_components_by_type(system.component_types))
+            system.init_components(dt, self._get_components_by_type('_new_components', system.component_types))
 
         for entity in self.entities:
             entity._components.update(entity._new_components)
             entity._new_components.clear()
 
         for system in self.systems:
-            system.update(dt, self._get_components_by_type(system.component_types))
+            system.update(dt, self._get_components_by_type('_components', system.component_types))
