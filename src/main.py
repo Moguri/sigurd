@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 import math
+import random
 import sys
 
 from direct.showbase.ShowBase import ShowBase
@@ -70,6 +71,17 @@ class Sigurd(ShowBase):
         player.add_component(PlayerComponent())
         player.add_component(WeaponComponent('katana'))
         self.ecsmanager.add_entity(player)
+
+        # Add some enemies
+        for i in range(5):
+            enemy = ecs.Entity()
+            np_component = NodePathComponent()
+            np_component.nodepath.reparent_to(base.render)
+            pos = (random.uniform(-7.3, 1.3), random.uniform(0.3, 7.6), 0)
+            np_component.nodepath.set_pos(*pos)
+            enemy.add_component(np_component)
+            enemy.add_component(CharacterComponent('katana'))
+            self.ecsmanager.add_entity(enemy)
 
         #TODO: ECS
         def play_attack():

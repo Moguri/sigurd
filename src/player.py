@@ -26,14 +26,18 @@ class CharacterComponent(ecs.Component):
         'speed',
         'movement',
         'heading_delta',
+        'actor',
+        'mesh_name',
     ]
 
     typeid = 'CHARACTER'
 
-    def __init__(self):
+    def __init__(self, mesh=None):
         self.speed = p3d.LVector3f(0.04, 0.04, 0.0)
         self.movement = p3d.LVector3f(0, 0, 0)
         self.heading_delta = 0
+        self.actor = None
+        self.mesh_name = mesh
 
 
 class PlayerComponent(ecs.Component):
@@ -48,10 +52,18 @@ class CharacterSystem(ecs.System):
     ]
 
     def init_components(self, dt, components):
+        #TODO: Component keys should always be in the dictionary
+
         for weapon in components.get('WEAPON', []):
             weapon.actor = Actor('models/{}'.format(weapon.name))
             np_component = weapon.entity.get_component('NODEPATH')
             weapon.actor.reparent_to(np_component.nodepath)
+
+        for char in components.get('CHARACTER', []):
+            if char.mesh_name:
+                char.actor = Actor('models/{}'.format(char.mesh_name))
+                np_component = char.entity.get_component('NODEPATH')
+                char.actor.reparent_to(np_component.nodepath)
 
     def update(self, dt, components):
         for char in components['CHARACTER']:
