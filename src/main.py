@@ -27,6 +27,13 @@ class Sigurd(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
 
+        self.render.set_shader_auto()
+        light = p3d.DirectionalLight('sun')
+        light.set_color(p3d.VBase4(1.0, 0.94, 0.84, 1.0))
+        light_np = self.render.attach_new_node(light)
+        light_np.set_hpr(p3d.VBase3(-135.0, -45.0, 0.0))
+        self.render.set_light(light_np)
+
         wp = p3d.WindowProperties()
         wp.set_cursor_hidden(True)
         wp.set_mouse_mode(p3d.WindowProperties.MRelative)
