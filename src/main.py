@@ -80,7 +80,7 @@ class Sigurd(ShowBase):
             pos = (random.uniform(-7.3, 1.3), random.uniform(0.3, 7.6), 0)
             np_component.nodepath.set_pos(*pos)
             enemy.add_component(np_component)
-            enemy.add_component(CharacterComponent('katana'))
+            enemy.add_component(CharacterComponent('demon'))
             self.ecsmanager.add_entity(enemy)
 
         #TODO: ECS
