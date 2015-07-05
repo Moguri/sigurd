@@ -68,6 +68,10 @@ class Sigurd(ShowBase):
         player.add_component(PlayerComponent())
         self.ecsmanager.add_entity(player)
 
+        #TODO: ECS
+        np_weapon = self.loader.loadModel('models/katana')
+        np_weapon.reparent_to(np_component.nodepath)
+
         self.accept('escape-up', sys.exit)
         self.accept('aspectRatioChanged', self.cb_resize)
 
