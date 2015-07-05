@@ -10,7 +10,7 @@ p3d.load_prc_file_data('', 'win-size 1920 1080')
 p3d.load_prc_file_data('', 'fullscreen #t')
 
 import ecs
-from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterSystem
+from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterSystem, WeaponComponent
 
 
 class NodePathComponent(ecs.Component):
@@ -68,14 +68,14 @@ class Sigurd(ShowBase):
         player.add_component(np_component)
         player.add_component(CharacterComponent())
         player.add_component(PlayerComponent())
+        player.add_component(WeaponComponent('katana'))
         self.ecsmanager.add_entity(player)
 
         #TODO: ECS
-        self.weapon = Actor('models/katana')
         def play_attack():
-            if not self.weapon.getAnimControl('attack').isPlaying():
-                self.weapon.play('attack', fromFrame=1, toFrame=21)
-        self.weapon.reparent_to(np_component.nodepath)
+            weapon = player.get_component('WEAPON').actor
+            if not weapon.getAnimControl('attack').isPlaying():
+                weapon.play('attack', fromFrame=1, toFrame=21)
         self.accept('mouse1', play_attack)
 
         self.accept('escape-up', sys.exit)

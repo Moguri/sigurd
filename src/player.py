@@ -1,3 +1,4 @@
+from direct.actor.Actor import Actor
 from direct.showbase.DirectObject import DirectObject
 import panda3d.core as p3d
 
@@ -6,6 +7,18 @@ import ecs
 
 def clamp(value, lower, upper):
     return max(min(value, upper), lower)
+
+
+class WeaponComponent(ecs.Component):
+    __slots__ = [
+        'name',
+        'actor',
+    ]
+    typeid = 'WEAPON'
+
+    def __init__(self, name):
+        self.name = name
+        self.actor = None
 
 
 class CharacterComponent(ecs.Component):
@@ -31,7 +44,14 @@ class PlayerComponent(ecs.Component):
 class CharacterSystem(ecs.System):
     component_types = [
         'CHARACTER',
+        'WEAPON',
     ]
+
+    def init_components(self, dt, components):
+        for weapon in components.get('WEAPON', []):
+            weapon.actor = Actor('models/{}'.format(weapon.name))
+            np_component = weapon.entity.get_component('NODEPATH')
+            weapon.actor.reparent_to(np_component.nodepath)
 
     def update(self, dt, components):
         for char in components['CHARACTER']:

@@ -42,7 +42,7 @@ class Entity(object):
         if typeid in self._components:
             return self._components[typeid]
         elif typeid in self._new_components:
-            return self._new_components
+            return self._new_components[typeid]
         else:
             raise KeyError('Enity has no component with typeid of {}'.format(typeid))
 
