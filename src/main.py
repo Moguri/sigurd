@@ -6,6 +6,9 @@ from direct.showbase.ShowBase import ShowBase
 from direct.actor.Actor import Actor
 import panda3d.core as p3d
 
+p3d.load_prc_file_data('', 'win-size 1920 1080')
+p3d.load_prc_file_data('', 'fullscreen #t')
+
 import ecs
 from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterSystem
 
@@ -38,8 +41,6 @@ class Sigurd(ShowBase):
         wp = p3d.WindowProperties()
         wp.set_cursor_hidden(True)
         wp.set_mouse_mode(p3d.WindowProperties.MRelative)
-        wp.set_size(1920, 1080)
-        wp.set_fullscreen(True)
         base.win.requestProperties(wp)
         self.disableMouse()
     
