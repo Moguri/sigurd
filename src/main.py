@@ -83,13 +83,6 @@ class Sigurd(ShowBase):
             enemy.add_component(CharacterComponent('melee', 'demon'))
             self.ecsmanager.add_entity(enemy)
 
-        #TODO: ECS
-        def play_attack():
-            weapon = player.get_component('WEAPON').actor
-            if not weapon.getAnimControl('attack').isPlaying():
-                weapon.play('attack', fromFrame=1, toFrame=21)
-        self.accept('mouse1', play_attack)
-
         self.accept('escape-up', sys.exit)
         self.accept('aspectRatioChanged', self.cb_resize)
 

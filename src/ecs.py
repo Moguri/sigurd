@@ -46,6 +46,9 @@ class Entity(object):
         else:
             raise KeyError('Enity has no component with typeid of {}'.format(typeid))
 
+    def has_component(self, typeid):
+        return typeid in self._components or typeid in self._new_components
+
 
 class System(object):
     __slots__ = [
