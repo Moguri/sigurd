@@ -67,7 +67,7 @@ class Sigurd(ShowBase):
         base.camera.set_pos(0, 0, 1.7)
         base.camLens.set_near(0.1)
         player.add_component(np_component)
-        player.add_component(CharacterComponent())
+        player.add_component(CharacterComponent('melee'))
         player.add_component(PlayerComponent())
         player.add_component(WeaponComponent('katana'))
         self.ecsmanager.add_entity(player)
@@ -80,7 +80,7 @@ class Sigurd(ShowBase):
             pos = (random.uniform(-7.3, 1.3), random.uniform(0.3, 7.6), 0)
             np_component.nodepath.set_pos(*pos)
             enemy.add_component(np_component)
-            enemy.add_component(CharacterComponent('demon'))
+            enemy.add_component(CharacterComponent('melee', 'demon'))
             self.ecsmanager.add_entity(enemy)
 
         #TODO: ECS

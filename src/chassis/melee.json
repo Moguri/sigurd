@@ -1,0 +1,18 @@
+{
+    "health": 1,
+    "mana": 1,
+    "attack_damage": 1,
+    "ability_power": 1,
+    "move_speed": 1,
+    "attack_speed": 1,
+    "armor": 1,
+    "magic_resistance": 1,
+    "health_per_lvl": 1,
+    "mana_per_lvl": 1,
+    "attack_damage_per_lvl": 1,
+    "ability_power_per_lvl": 1,
+    "move_speed_per_lvl": 1,
+    "attack_speed_per_lvl": 1,
+    "armor_per_lvl": 1,
+    "magic_resistance_per_lvl": 1
+}

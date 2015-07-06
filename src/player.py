@@ -1,3 +1,6 @@
+import json
+import os
+
 from direct.actor.Actor import Actor
 from direct.showbase.DirectObject import DirectObject
 import panda3d.core as p3d
@@ -28,16 +31,54 @@ class CharacterComponent(ecs.Component):
         'heading_delta',
         'actor',
         'mesh_name',
+        '_chassis',
+        'level',
     ]
 
     typeid = 'CHARACTER'
 
-    def __init__(self, mesh=None):
+    def __init__(self, chassis, mesh=None):
         self.speed = p3d.LVector3f(0.04, 0.04, 0.0)
         self.movement = p3d.LVector3f(0, 0, 0)
         self.heading_delta = 0
         self.actor = None
         self.mesh_name = mesh
+
+        self.level = 1
+        with open(os.path.join('chassis', chassis) + '.json') as f:
+            self._chassis = json.load(f)
+
+    @property
+    def health(self):
+        return self._chassis['health'] + self._chassis['health_per_lvl'] * self.level - 1
+
+    @property
+    def mana(self):
+        return self._chassis['mana'] + self._chassis['mana_per_lvl'] * self.level - 1
+
+    @property
+    def attack_damage(self):
+        return self._chassis['attack_damage'] + self._chassis['attack_damage_per_lvl'] * self.level - 1
+
+    @property
+    def ability_power(self):
+        return self._chassis['ability_power'] + self._chassis['ability_power_per_lvl'] * self.level - 1
+
+    @property
+    def move_speed(self):
+        return self._chassis['move_speed'] + self._chassis['move_speed_per_lvl'] * self.level - 1
+
+    @property
+    def attack_speed(self):
+        return self._chassis['attack_speed'] + self._chassis['attack_speed_per_lvl'] * self.level - 1
+
+    @property
+    def armor(self):
+        return self._chassis['armor'] + self._chassis['armor_per_lvl'] * self.level - 1
+
+    @property
+    def magic_resistance(self):
+        return self._chassis['magic_resistance'] + self._chassis['magic_resistance_per_lvl'] * self.level - 1
 
 
 class PlayerComponent(ecs.Component):
