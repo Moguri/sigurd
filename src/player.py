@@ -132,6 +132,11 @@ class CharacterSystem(ecs.System):
                         weapon.play('attack', fromFrame=1, toFrame=21)
                 char.action_set.remove('ATTACK')
 
+            for track in ['TRACK_ONE', 'TRACK_TWO', 'TRACK_THREE', 'TRACK_FOUR']:
+                if track in char.action_set:
+                    print(track)
+                    char.action_set.remove(track)
+
 
 class PlayerSystem(ecs.System, DirectObject):
     component_types = [
@@ -153,10 +158,14 @@ class PlayerSystem(ecs.System, DirectObject):
         self.accept('move-left-up', self.update_movement, ['left', False])
         self.accept('move-right', self.update_movement, ['right', True])
         self.accept('move-right-up', self.update_movement, ['right', False])
-        self.accept('attack', self.attack)
+        self.accept('attack', self.add_action, ['ATTACK'])
+        self.accept('track-one', self.add_action, ['TRACK_ONE'])
+        self.accept('track-two', self.add_action, ['TRACK_TWO'])
+        self.accept('track-three', self.add_action, ['TRACK_THREE'])
+        self.accept('track-four', self.add_action, ['TRACK_FOUR'])
 
-    def attack(self):
-        self.action_set.add('ATTACK')
+    def add_action(self, action):
+        self.action_set.add(action)
 
     def update_movement(self, direction, activate):
         move_delta = p3d.LVector3(0, 0, 0)
