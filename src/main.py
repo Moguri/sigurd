@@ -11,6 +11,7 @@ p3d.load_prc_file_data('', 'win-size 1920 1080')
 p3d.load_prc_file_data('', 'fullscreen #t')
 
 import ecs
+import inputmapper
 from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterSystem, WeaponComponent
 from physics import PhysicsSystem, HitBoxComponent
 
@@ -45,7 +46,9 @@ class Sigurd(ShowBase):
         wp.set_mouse_mode(p3d.WindowProperties.MRelative)
         base.win.requestProperties(wp)
         self.disableMouse()
-    
+
+        self.inputmapper = inputmapper.InputMapper('input.conf')
+
         self.ecsmanager = ecs.ECSManager()
         self.ecsmanager.add_system(PlayerSystem())
         self.ecsmanager.add_system(CharacterSystem())
@@ -86,7 +89,7 @@ class Sigurd(ShowBase):
             enemy.add_component(HitBoxComponent())
             self.ecsmanager.add_entity(enemy)
 
-        self.accept('escape-up', sys.exit)
+        self.accept('quit-up', sys.exit)
         self.accept('aspectRatioChanged', self.cb_resize)
 
     def cb_resize(self):

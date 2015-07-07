@@ -145,15 +145,15 @@ class PlayerSystem(ecs.System, DirectObject):
         self.mousex_sensitivity = 25
         self.mousey_sensitivity = 25
 
-        self.accept('w', self.update_movement, ['forward', True])
-        self.accept('w-up', self.update_movement, ['forward', False])
-        self.accept('s', self.update_movement, ['backward', True])
-        self.accept('s-up', self.update_movement, ['backward', False])
-        self.accept('a', self.update_movement, ['left', True])
-        self.accept('a-up', self.update_movement, ['left', False])
-        self.accept('d', self.update_movement, ['right', True])
-        self.accept('d-up', self.update_movement, ['right', False])
-        self.accept('mouse1', self.attack)
+        self.accept('move-forward', self.update_movement, ['forward', True])
+        self.accept('move-forward-up', self.update_movement, ['forward', False])
+        self.accept('move-backward', self.update_movement, ['backward', True])
+        self.accept('move-backward-up', self.update_movement, ['backward', False])
+        self.accept('move-left', self.update_movement, ['left', True])
+        self.accept('move-left-up', self.update_movement, ['left', False])
+        self.accept('move-right', self.update_movement, ['right', True])
+        self.accept('move-right-up', self.update_movement, ['right', False])
+        self.accept('attack', self.attack)
 
     def attack(self):
         self.action_set.add('ATTACK')
