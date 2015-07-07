@@ -62,10 +62,14 @@ class System(object):
         pass
 
 
+class DuplicateSystemException(Exception):
+    pass
+
+
 class ECSManager(object):
     def __init__(self):
         self.entities = []
-        self.systems = set()
+        self.systems = {}
 
     def add_entity(self, entity):
         self.entities.append(entity)
@@ -74,10 +78,23 @@ class ECSManager(object):
         self.entities.remove(entity)
 
     def add_system(self, system):
-        self.systems.add(system)
+        name = system.__class__.__name__
+        if name in self.systems:
+            raise DuplicateSystemException("{} has already been added.".format(name))
+        self.systems[name] = system
 
-    def remove_system(self, system):
-        self.systems.remove(system)
+    def has_system(self, system_str):
+        return system_str in self.systems
+
+    def get_system(self, system_str):
+        if system_str not in self.systems:
+            raise KeyError('No system found with the name of {}'.format(system_str))
+        return self.systems[system_str]
+
+    def remove_system(self, system_str):
+        if system_str not in self.systems:
+            raise KeyError('No system found with the name of {}'.format(system_str))
+        del self.systems[system_str]
 
     def _get_components_by_type(self, component_list, component_types):
         components = [component for entity in self.entities for component in getattr(entity, component_list).values() if component.typeid in component_types]
@@ -86,12 +103,12 @@ class ECSManager(object):
         return components
 
     def update(self, dt):
-        for system in self.systems:
+        for system in self.systems.values():
             system.init_components(dt, self._get_components_by_type('_new_components', system.component_types))
 
         for entity in self.entities:
             entity._components.update(entity._new_components)
             entity._new_components.clear()
 
-        for system in self.systems:
+        for system in self.systems.values():
             system.update(dt, self._get_components_by_type('_components', system.component_types))
