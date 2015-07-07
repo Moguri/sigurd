@@ -12,6 +12,7 @@ p3d.load_prc_file_data('', 'fullscreen #t')
 
 import ecs
 from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterSystem, WeaponComponent
+from physics import PhysicsSystem, HitBoxComponent
 
 
 class NodePathComponent(ecs.Component):
@@ -48,6 +49,7 @@ class Sigurd(ShowBase):
         self.ecsmanager = ecs.ECSManager()
         self.ecsmanager.add_system(PlayerSystem())
         self.ecsmanager.add_system(CharacterSystem())
+        self.ecsmanager.add_system(PhysicsSystem())
 
         def run_ecs(task):
             self.ecsmanager.update(0)
@@ -81,6 +83,7 @@ class Sigurd(ShowBase):
             np_component.nodepath.set_pos(*pos)
             enemy.add_component(np_component)
             enemy.add_component(CharacterComponent('melee', 'demon'))
+            enemy.add_component(HitBoxComponent())
             self.ecsmanager.add_entity(enemy)
 
         self.accept('escape-up', sys.exit)
