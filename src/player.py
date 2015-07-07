@@ -179,7 +179,7 @@ class PlayerSystem(ecs.System, DirectObject):
         player = list(components['PLAYER'])[0]
         pc = player.entity.get_component('CHARACTER')
         pc.movement = self.movement
-        pc.action_set = self.action_set
+        pc.action_set = self.action_set.copy()
         self.action_set.clear()
         if base.mouseWatcherNode.has_mouse():
             mouse = base.mouseWatcherNode.get_mouse()
