@@ -16,12 +16,14 @@ class WeaponComponent(ecs.Component):
     __slots__ = [
         'name',
         'actor',
+        'range',
     ]
     typeid = 'WEAPON'
 
     def __init__(self, name):
         self.name = name
         self.actor = None
+        self.range = 1.0
 
 
 class CharacterComponent(ecs.Component):
@@ -34,6 +36,7 @@ class CharacterComponent(ecs.Component):
         '_chassis',
         'level',
         'action_set',
+        'attack_move_target',
     ]
 
     typeid = 'CHARACTER'
@@ -114,11 +117,13 @@ class CharacterSystem(ecs.System):
             nodepath = char.entity.get_component('NODEPATH').nodepath
 
             # Position
-            new_pos = nodepath.getMat(base.render).xformVec(char.movement)
-            new_pos.normalize()
-            new_pos.componentwiseMult(char.speed)
-            new_pos += nodepath.get_pos()
-            nodepath.set_pos(new_pos)
+            if char.movement.length_squared() > 0.0:
+                new_pos = nodepath.getMat(base.render).xformVec(char.movement)
+                new_pos.normalize()
+                new_pos.componentwiseMult(char.speed)
+                new_pos += nodepath.get_pos()
+                nodepath.set_pos(new_pos)
+                char.action_set.discard('ATTACK_MOVE')
 
             # Rotation
             heading = nodepath.get_h() + char.heading_delta
@@ -126,11 +131,34 @@ class CharacterSystem(ecs.System):
             char.heading_delta = 0
 
             if 'ATTACK' in char.action_set:
-                if char.entity.has_component('WEAPON'):
-                    weapon = char.entity.get_component('WEAPON').actor
-                    if not weapon.getAnimControl('attack').isPlaying():
-                        weapon.play('attack', fromFrame=1, toFrame=21)
+                if base.ecsmanager.has_system('PhysicsSystem'):
+                    physics = base.ecsmanager.get_system('PhysicsSystem')
+                    to_vec = base.render.get_relative_vector(nodepath, p3d.LVector3f(0, 1, 0))
+                    from_pos = nodepath.get_pos() + p3d.LVector3f(0, 0, 0.5)
+                    to_pos = from_pos + to_vec * 1000
+                    hits = physics.ray_cast(from_pos, to_pos, all_hits=True)
+                    if hits:
+                        hit = min(hits, key=lambda h: h.t)
+                        char.attack_move_target = hit.position
+                        char.action_set.add('ATTACK_MOVE')
+
                 char.action_set.remove('ATTACK')
+
+            if 'ATTACK_MOVE' in char.action_set:
+                if char.entity.has_component('WEAPON'):
+                    weapon = char.entity.get_component('WEAPON')
+
+                    vec_to = char.attack_move_target - nodepath.get_pos()
+                    distance = vec_to.length()
+                    if distance < weapon.range:
+                        if not weapon.actor.getAnimControl('attack').isPlaying():
+                            weapon.actor.play('attack', fromFrame=1, toFrame=21)
+                        char.action_set.discard('ATTACK_MOVE')
+                    else:
+                        vec_to.normalize()
+                        vec_to.componentwiseMult(char.speed)
+                        new_pos = nodepath.get_pos() + vec_to
+                        nodepath.set_pos(new_pos)
 
             for track in ['TRACK_ONE', 'TRACK_TWO', 'TRACK_THREE', 'TRACK_FOUR']:
                 if track in char.action_set:
@@ -188,7 +216,7 @@ class PlayerSystem(ecs.System, DirectObject):
         player = list(components['PLAYER'])[0]
         pc = player.entity.get_component('CHARACTER')
         pc.movement = self.movement
-        pc.action_set = self.action_set.copy()
+        pc.action_set = pc.action_set.union(self.action_set)
         self.action_set.clear()
         if base.mouseWatcherNode.has_mouse():
             mouse = base.mouseWatcherNode.get_mouse()
