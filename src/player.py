@@ -12,7 +12,7 @@ def clamp(value, lower, upper):
     return max(min(value, upper), lower)
 
 
-class WeaponComponent(ecs.Component):
+class WeaponComponent(ecs.UniqueComponent):
     __slots__ = [
         'name',
         'actor',
@@ -26,7 +26,7 @@ class WeaponComponent(ecs.Component):
         self.range = 1.0
 
 
-class CharacterComponent(ecs.Component):
+class CharacterComponent(ecs.UniqueComponent):
     __slots__ = [
         'speed',
         'movement',
@@ -87,7 +87,7 @@ class CharacterComponent(ecs.Component):
         return self._chassis['magic_resistance'] + self._chassis['magic_resistance_per_lvl'] * self.level - 1
 
 
-class PlayerComponent(ecs.Component):
+class PlayerComponent(ecs.UniqueComponent):
     __slots__ = []
     typeid = 'PLAYER'
 
