@@ -71,7 +71,10 @@ class Entity(object):
             del d[component.typeid]
 
     def get_component(self, typeid):
-        return self.get_first_component(typeid)
+        if len(self.get_components(typeid)) > 1:
+            raise RuntimeError('Entity has more than one component with typeid of {}'.format(typeid))
+
+        return self.get_components(typeid)[0]
 
     def get_components(self, typeid):
         if typeid in self._components:
@@ -80,9 +83,6 @@ class Entity(object):
             return self._new_components[typeid]
         else:
             raise KeyError('Enity has no component with typeid of {}'.format(typeid))
-
-    def get_first_component(self, typeid):
-        return self.get_components(typeid)[0]
 
     def has_component(self, typeid):
         return typeid in self._components or typeid in self._new_components
