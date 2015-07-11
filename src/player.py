@@ -1,3 +1,5 @@
+from __future__ import division
+
 import json
 import os
 
@@ -215,13 +217,13 @@ class PlayerSystem(ecs.System, DirectObject):
     def update(self, dt, components):
         player = list(components['PLAYER'])[0]
         pc = player.entity.get_component('CHARACTER')
-        pc.movement = self.movement
+        pc.movement = p3d.LVector3(self.movement)
         pc.action_set = pc.action_set.union(self.action_set)
         self.action_set.clear()
         if base.mouseWatcherNode.has_mouse():
             mouse = base.mouseWatcherNode.get_mouse()
-            halfx = base.win.get_x_size() / 2
-            halfy = base.win.get_y_size() / 2
+            halfx = base.win.get_x_size() // 2
+            halfy = base.win.get_y_size() // 2
             base.win.move_pointer(0, halfx, halfy)
 
             self.camera_pitch += mouse.y * self.mousey_sensitivity
