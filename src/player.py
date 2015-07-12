@@ -39,6 +39,10 @@ class CharacterComponent(ecs.UniqueComponent):
         'level',
         'action_set',
         'attack_move_target',
+        'track_one',
+        'track_two',
+        'track_three',
+        'track_four',
     ]
 
     typeid = 'CHARACTER'
@@ -55,6 +59,12 @@ class CharacterComponent(ecs.UniqueComponent):
             self._chassis = json.load(f)
 
         self.action_set = set()
+
+        for t in ['track_one', 'track_two', 'track_three', 'track_four']:
+            track_entity = ecs.Entity()
+            track_entity.add_component(PrintEffectComponent({'message': t.upper()}))
+            base.ecsmanager.add_entity(track_entity)
+            setattr(self, t, track_entity)
 
     @property
     def health(self):
@@ -164,7 +174,8 @@ class CharacterSystem(ecs.System):
 
             for track in ['TRACK_ONE', 'TRACK_TWO', 'TRACK_THREE', 'TRACK_FOUR']:
                 if track in char.action_set:
-                    print(track)
+                    for component in getattr(char, track.lower()).get_components('EFFECT'):
+                        component.cmd_queue.add('ACTIVATE')
                     char.action_set.remove(track)
 
 
@@ -232,3 +243,38 @@ class PlayerSystem(ecs.System, DirectObject):
             pc.heading_delta += -mouse.x * self.mousex_sensitivity
 
         base.camera.set_p(self.camera_pitch)
+
+class EffectComponent(ecs.Component):
+    __slots__ = [
+        'cmd_queue',
+        'effect_type'
+    ]
+    typeid = 'EFFECT'
+
+    def __init__(self):
+        self.cmd_queue = set()
+
+class PrintEffectComponent(EffectComponent):
+    __slots__ = ['message']
+    effect_type = 'PRINT'
+
+    def __init__(self, effect_data):
+        EffectComponent.__init__(self)
+        self.message = effect_data['message']
+
+class EffectSystem(ecs.System):
+    __slots__ = []
+
+    component_types = [
+        'EFFECT',
+    ]
+
+    def update(self, dt, components):
+        for component in components['EFFECT']:
+            cfunc = component.effect_type.lower() + '_effect'
+            if 'ACTIVATE' in component.cmd_queue:
+                getattr(self, cfunc)(dt, component)
+                component.cmd_queue.remove('ACTIVATE')
+
+    def print_effect(self, dt, component):
+        print(component.message)

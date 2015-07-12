@@ -12,7 +12,7 @@ p3d.load_prc_file_data('', 'fullscreen #t')
 
 import ecs
 import inputmapper
-from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterSystem, WeaponComponent
+from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterSystem, WeaponComponent, EffectSystem
 from physics import PhysicsSystem, HitBoxComponent
 
 
@@ -53,6 +53,7 @@ class Sigurd(ShowBase):
         self.ecsmanager.add_system(PlayerSystem())
         self.ecsmanager.add_system(CharacterSystem())
         self.ecsmanager.add_system(PhysicsSystem())
+        self.ecsmanager.add_system(EffectSystem())
 
         def run_ecs(task):
             self.ecsmanager.update(0)
