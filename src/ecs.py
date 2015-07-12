@@ -34,11 +34,13 @@ class Entity(object):
         '_components',
         '_new_components',
         '__weakref__',
+        'guid',
     ]
 
     def __init__(self):
         self._components = {}
         self._new_components = {}
+        self.guid = None
 
     def add_component(self, component):
         typeid = component.typeid
@@ -111,8 +113,11 @@ class ECSManager(object):
     def __init__(self):
         self.entities = []
         self.systems = {}
+        self.next_entity_guid = 0
 
     def add_entity(self, entity):
+        entity.guid = self.next_entity_guid
+        self.next_entity_guid += 1
         self.entities.append(entity)
 
     def remove_entity(self, entity):
@@ -146,10 +151,12 @@ class ECSManager(object):
         return components
 
     def update(self, dt):
+        entities = self.entities[:]
+
         for system in self.systems.values():
             system.init_components(dt, self._get_components_by_type('_new_components', system.component_types))
 
-        for entity in self.entities:
+        for entity in entities:
             for typeid, clist in entity._new_components.items():
                 if typeid in entity._components:
                     entity._components[typeid].extend(clist)

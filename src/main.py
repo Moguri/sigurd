@@ -32,6 +32,9 @@ class NodePathComponent(ecs.Component):
         else:
             self.nodepath = p3d.NodePath(p3d.PandaNode('node'))
 
+    def __del__(self):
+        self.nodepath.remove_node()
+
 
 class Sigurd(ShowBase):
     def __init__(self):

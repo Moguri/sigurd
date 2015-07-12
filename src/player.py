@@ -2,6 +2,7 @@ from __future__ import division
 
 import json
 import os
+import collections
 
 from direct.actor.Actor import Actor
 from direct.showbase.DirectObject import DirectObject
@@ -40,10 +41,12 @@ class CharacterComponent(ecs.UniqueComponent):
         'level',
         'action_set',
         'attack_move_target',
+        'target_entity_guid',
         'track_one',
         'track_two',
         'track_three',
         'track_four',
+        'current_health',
     ]
 
     typeid = 'CHARACTER'
@@ -71,6 +74,8 @@ class CharacterComponent(ecs.UniqueComponent):
                 track_entity.add_component(component)
             base.ecsmanager.add_entity(track_entity)
             setattr(self, t, track_entity)
+
+        self.current_health = self.health
 
     @property
     def health(self):
@@ -113,11 +118,18 @@ class PlayerComponent(ecs.UniqueComponent):
         super().__init__()
 
 
+Attack = collections.namedtuple('Attack', 'damage')
+
+
 class CharacterSystem(ecs.System):
     component_types = [
         'CHARACTER',
         'WEAPON',
     ]
+
+    def __init__(self):
+        super().__init__()
+        self._attack_queues = {}
 
     def init_components(self, dt, components):
         #TODO: Component keys should always be in the dictionary
@@ -132,6 +144,7 @@ class CharacterSystem(ecs.System):
                 char.actor = Actor('models/{}'.format(char.mesh_name))
                 np_component = char.entity.get_component('NODEPATH')
                 char.actor.reparent_to(np_component.nodepath)
+            self._attack_queues[char.entity.guid] = []
 
     def update(self, dt, components):
         for char in components['CHARACTER']:
@@ -151,6 +164,11 @@ class CharacterSystem(ecs.System):
             nodepath.set_h(heading)
             char.heading_delta = 0
 
+            # Resolve attacks
+            for attack in self._attack_queues[char.entity.guid]:
+                char.current_health -= attack.damage
+            self._attack_queues[char.entity.guid].clear()
+
             if 'ATTACK' in char.action_set:
                 if base.ecsmanager.has_system('PhysicsSystem'):
                     physics = base.ecsmanager.get_system('PhysicsSystem')
@@ -161,6 +179,7 @@ class CharacterSystem(ecs.System):
                     if hits:
                         hit = min(hits, key=lambda h: h.t)
                         char.attack_move_target = hit.position
+                        char.target_entity_guid = hit.component.entity.guid
                         char.action_set.add('ATTACK_MOVE')
 
                 char.action_set.remove('ATTACK')
@@ -174,6 +193,7 @@ class CharacterSystem(ecs.System):
                     if distance < weapon.range:
                         if not weapon.actor.getAnimControl('attack').isPlaying():
                             weapon.actor.play('attack', fromFrame=1, toFrame=21)
+                        self._attack_queues[char.target_entity_guid].append(Attack(1))
                         char.action_set.discard('ATTACK_MOVE')
                     else:
                         vec_to.normalize()
@@ -186,6 +206,10 @@ class CharacterSystem(ecs.System):
                     for component in getattr(char, track.lower()).get_components('EFFECT'):
                         component.cmd_queue.add('ACTIVATE')
                     char.action_set.remove(track)
+
+            # Resolve health and dying
+            if char.current_health <= 0:
+                base.ecsmanager.remove_entity(char.entity)
 
 
 class PlayerSystem(ecs.System, DirectObject):

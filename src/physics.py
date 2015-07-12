@@ -11,6 +11,7 @@ class HitResult(object):
         self.node = bullet_hit.get_node()
         self.t = bullet_hit.get_hit_fraction()
         self.triangle_index = bullet_hit.get_triangle_index()
+        self.component = self.node.get_python_tag('component')
 
     def __repr__(self):
         return '<HitResult position:{} normal:{} node:{} t:{} triangle_index:{}'.format(
@@ -34,6 +35,7 @@ class HitBoxComponent(ecs.Component):
         shape = bullet.BulletBoxShape(p3d.LVector3f(0.25, 0.25, 0.8))
         self.physics_node = bullet.BulletGhostNode('HitBox')
         self.physics_node.add_shape(shape, xform_state)
+        self.physics_node.set_python_tag('component', self)
 
 
 class PhysicsSystem(ecs.System):
