@@ -20,6 +20,7 @@ class WeaponComponent(ecs.UniqueComponent):
         'name',
         'actor',
         'range',
+        'has_hit',
     ]
     typeid = 'WEAPON'
 
@@ -28,6 +29,7 @@ class WeaponComponent(ecs.UniqueComponent):
         self.name = name
         self.actor = None
         self.range = 1.0
+        self.has_hit = False
 
 
 class CharacterComponent(ecs.UniqueComponent):
@@ -191,10 +193,17 @@ class CharacterSystem(ecs.System):
                     vec_to = char.attack_move_target - nodepath.get_pos()
                     distance = vec_to.length()
                     if distance < weapon.range:
-                        if not weapon.actor.getAnimControl('attack').isPlaying():
-                            weapon.actor.play('attack', fromFrame=1, toFrame=21)
-                        self._attack_queues[char.target_entity_guid].append(Attack(1))
-                        char.action_set.discard('ATTACK_MOVE')
+                        anim_control = weapon.actor.getAnimControl('attack')
+                        if not anim_control.is_playing():
+                            if weapon.has_hit:
+                                weapon.has_hit = False
+                                char.action_set.discard('ATTACK_MOVE')
+                            else:
+                                weapon.actor.play('attack', fromFrame=1, toFrame=21)
+
+                        if not weapon.has_hit and anim_control.get_frame() >= 18:
+                            weapon.has_hit = True
+                            self._attack_queues[char.target_entity_guid].append(Attack(1))
                     else:
                         vec_to.normalize()
                         vec_to.componentwiseMult(char.speed)
