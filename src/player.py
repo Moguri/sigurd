@@ -23,6 +23,7 @@ class WeaponComponent(ecs.UniqueComponent):
     typeid = 'WEAPON'
 
     def __init__(self, name):
+        super().__init__()
         self.name = name
         self.actor = None
         self.range = 1.0
@@ -48,6 +49,7 @@ class CharacterComponent(ecs.UniqueComponent):
     typeid = 'CHARACTER'
 
     def __init__(self, chassis, mesh=None):
+        super().__init__()
         self.speed = p3d.LVector3f(0.04, 0.04, 0.0)
         self.movement = p3d.LVector3f(0, 0, 0)
         self.heading_delta = 0
@@ -106,6 +108,9 @@ class CharacterComponent(ecs.UniqueComponent):
 class PlayerComponent(ecs.UniqueComponent):
     __slots__ = []
     typeid = 'PLAYER'
+
+    def __init__(self):
+        super().__init__()
 
 
 class CharacterSystem(ecs.System):

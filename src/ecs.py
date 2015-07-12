@@ -9,7 +9,8 @@ class Component(object):
         '_is_unique',
     ]
 
-    _is_unique = False
+    def __init__(self):
+        self._is_unique = False
 
     @property
     def entity(self):
@@ -23,7 +24,9 @@ class Component(object):
 class UniqueComponent(Component):
     __slots__ = []
 
-    _is_unique = True
+    def __init__(self):
+        super().__init__()
+        self._is_unique = True
 
 
 class Entity(object):

@@ -24,6 +24,7 @@ class NodePathComponent(ecs.Component):
     typeid = 'NODEPATH'
 
     def __init__(self, modelpath=None):
+        super().__init__()
         if modelpath is not None:
             self.nodepath = base.loader.loadModel(modelpath)
         else:
