@@ -261,6 +261,7 @@ class EffectComponent(ecs.Component):
     typeid = 'EFFECT'
 
     def __init__(self):
+        super().__init__()
         self.cmd_queue = set()
 
 class PrintEffectComponent(EffectComponent):
@@ -268,6 +269,7 @@ class PrintEffectComponent(EffectComponent):
     effect_type = 'PRINT'
 
     def __init__(self, effect_data):
+        super().__init__()
         EffectComponent.__init__(self)
         self.message = effect_data['message']
 
