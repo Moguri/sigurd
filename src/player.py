@@ -61,8 +61,12 @@ class CharacterComponent(ecs.UniqueComponent):
         self.action_set = set()
 
         for t in ['track_one', 'track_two', 'track_three', 'track_four']:
+            with open(os.path.join('tracks', t) + '.json') as f:
+                track_data = json.load(f)
             track_entity = ecs.Entity()
-            track_entity.add_component(PrintEffectComponent({'message': t.upper()}))
+            for component_data in track_data['components']:
+                component = globals()[component_data['name'] + 'EffectComponent'](component_data['args'])
+                track_entity.add_component(component)
             base.ecsmanager.add_entity(track_entity)
             setattr(self, t, track_entity)
 

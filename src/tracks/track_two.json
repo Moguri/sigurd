@@ -1,0 +1,10 @@
+{
+    "components": [
+        {
+            "name": "Print",
+            "args": {
+                "message": "Activating track two"
+            }
+        }
+    ]
+}
