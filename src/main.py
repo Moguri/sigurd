@@ -2,13 +2,15 @@
 import math
 import random
 import sys
+import os
 
 from direct.showbase.ShowBase import ShowBase
 from direct.actor.Actor import Actor
 import panda3d.core as p3d
 
-p3d.load_prc_file_data('', 'win-size 1920 1080')
-p3d.load_prc_file_data('', 'fullscreen #t')
+p3d.load_prc_file('config/engine.prc')
+if os.path.exists(os.path.join('config', 'user.prc')):
+    p3d.load_prc_file('config/user.prc')
 
 import ecs
 import inputmapper

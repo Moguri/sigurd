@@ -57,3 +57,6 @@ target/
 
 # PyCharm files
 .idea
+
+# User config file
+user.prc
