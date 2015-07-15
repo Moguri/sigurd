@@ -335,13 +335,12 @@ class AiComponent(ecs.UniqueComponent):
 
 
 class AiSystem(ecs.System):
-   component_types = [
-       'PLAYER',
-       'AI',
-   ]
+    component_types = [
+        'PLAYER',
+        'AI',
+    ]
 
-   def update(self, dt, components):
-
+    def update(self, dt, components):
         for aicomp in components['AI']:
             # Pick target
             target = components['PLAYER'][0]
@@ -356,4 +355,3 @@ class AiSystem(ecs.System):
             # Attack target
             aichar = aicomp.entity.get_component('CHARACTER')
             aichar.action_set.add('ATTACK')
-
