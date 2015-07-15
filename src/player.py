@@ -322,3 +322,32 @@ class EffectSystem(ecs.System):
 
     def print_effect(self, dt, component):
         print(component.message)
+
+
+class AiComponent(ecs.UniqueComponent):
+    __slots__ = [
+
+    ]
+
+    typeid = 'AI'
+
+
+class AiSystem(ecs.System):
+   component_types = [
+       'PLAYER',
+       'AI',
+   ]
+
+   def update(self, dt, components):
+
+        for aicomp in components['AI']:
+            # Pick target
+            target = components['PLAYER'][0]
+            targetnp = target.entity.get_component('NODEPATH').nodepath
+
+            # Face target
+            ainp = aicomp.entity.get_component('NODEPATH')
+            look_point = targetnp.get_pos()
+            look_point.z = ainp.nodepath.get_pos().z
+            ainp.nodepath.look_at(look_point, p3d.LVector3(0, 0, 1))
+

@@ -14,7 +14,7 @@ if os.path.exists(os.path.join('config', 'user.prc')):
 
 import ecs
 import inputmapper
-from player import CharacterComponent, PlayerSystem, PlayerComponent, CharacterSystem, WeaponComponent, EffectSystem
+from player import *
 from physics import PhysicsSystem, HitBoxComponent
 
 
@@ -60,6 +60,7 @@ class Sigurd(ShowBase):
         self.ecsmanager.add_system(CharacterSystem())
         self.ecsmanager.add_system(PhysicsSystem())
         self.ecsmanager.add_system(EffectSystem())
+        self.ecsmanager.add_system(AiSystem())
 
         def run_ecs(task):
             self.ecsmanager.update(0)
@@ -94,6 +95,7 @@ class Sigurd(ShowBase):
             enemy.add_component(np_component)
             enemy.add_component(CharacterComponent('melee', 'demon'))
             enemy.add_component(HitBoxComponent())
+            enemy.add_component(AiComponent())
             self.ecsmanager.add_entity(enemy)
 
         self.accept('quit-up', sys.exit)
