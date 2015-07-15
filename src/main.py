@@ -1,11 +1,9 @@
 #!/usr/bin/env python2
 import math
-import random
 import sys
 import os
 
 from direct.showbase.ShowBase import ShowBase
-from direct.actor.Actor import Actor
 import panda3d.core as p3d
 
 p3d.load_prc_file('config/engine.prc')
@@ -14,27 +12,9 @@ if os.path.exists(os.path.join('config', 'user.prc')):
 
 import ecs
 import inputmapper
+import game_modes
 from player import *
-from physics import PhysicsSystem, HitBoxComponent
-
-
-class NodePathComponent(ecs.Component):
-    __slots__ = [
-        'nodepath',
-    ]
-
-    typeid = 'NODEPATH'
-
-    def __init__(self, modelpath=None):
-        super().__init__()
-        if modelpath is not None:
-            self.nodepath = base.loader.loadModel(modelpath)
-        else:
-            self.nodepath = p3d.NodePath(p3d.PandaNode('node'))
-
-    def __del__(self):
-        super().__del__()
-        self.nodepath.remove_node()
+from physics import PhysicsSystem
 
 
 class Sigurd(ShowBase):
@@ -63,49 +43,23 @@ class Sigurd(ShowBase):
         self.ecsmanager.add_system(EffectSystem())
         self.ecsmanager.add_system(AiSystem())
 
+        self.game_mode = game_modes.ClassicGameMode()
+
         def run_ecs(task):
             self.ecsmanager.update(0)
+            if self.game_mode.is_game_over():
+                print("Game over, restarting")
+                messenger.send('restart-game')
             return task.cont
         self.taskMgr.add(run_ecs, 'ECS')
 
-        self.ecsmanager.space.add_component(NodePathComponent())
-        spacenp = self.ecsmanager.space.get_component('NODEPATH').nodepath
-        spacenp.reparent_to(base.render)
+        def restart_game():
+            self.game_mode.end_game()
+            self.game_mode.start_game()
 
-        level = self.ecsmanager.create_entity()
-        np_component = NodePathComponent('models/level')
-        np_component.nodepath.reparent_to(spacenp)
-        level.add_component(np_component)
+        restart_game()
 
-        player = self.ecsmanager.create_entity()
-        np_component = NodePathComponent()
-        np_component.nodepath.reparent_to(spacenp)
-        base.camera.reparent_to(np_component.nodepath)
-        base.camera.set_pos(0, 0, 1.7)
-        base.camLens.set_near(0.1)
-        player.add_component(np_component)
-        player.add_component(CharacterComponent('melee'))
-        player.add_component(PlayerComponent())
-        player.add_component(WeaponComponent('katana'))
-        player.add_component(HitBoxComponent())
-
-        # Add some enemies
-        for i in range(5):
-            enemy = self.ecsmanager.create_entity()
-            np_component = NodePathComponent()
-            np_component.nodepath.reparent_to(spacenp)
-            pos = (random.uniform(-7.3, 1.3), random.uniform(0.3, 7.6), 0)
-            np_component.nodepath.set_pos(*pos)
-            enemy.add_component(np_component)
-            enemy.add_component(CharacterComponent('melee', 'demon'))
-            enemy.add_component(HitBoxComponent())
-            enemy.add_component(WeaponComponent('katana'))
-            enemy.add_component(AiComponent())
-
-        def remove_space():
-            self.ecsmanager.remove_space()
-            self.render.ls()
-        self.accept('f1', remove_space)
+        self.accept('restart-game', restart_game)
         self.accept('quit-up', sys.exit)
         self.accept('aspectRatioChanged', self.cb_resize)
 

@@ -15,6 +15,25 @@ def clamp(value, lower, upper):
     return max(min(value, upper), lower)
 
 
+class NodePathComponent(ecs.Component):
+    __slots__ = [
+        'nodepath',
+    ]
+
+    typeid = 'NODEPATH'
+
+    def __init__(self, modelpath=None):
+        super().__init__()
+        if modelpath is not None:
+            self.nodepath = base.loader.loadModel(modelpath)
+        else:
+            self.nodepath = p3d.NodePath(p3d.PandaNode('node'))
+
+    def __del__(self):
+        super().__del__()
+        self.nodepath.remove_node()
+
+
 class WeaponComponent(ecs.UniqueComponent):
     __slots__ = [
         'name',
