@@ -33,6 +33,7 @@ class NodePathComponent(ecs.Component):
             self.nodepath = p3d.NodePath(p3d.PandaNode('node'))
 
     def __del__(self):
+        super().__del__()
         self.nodepath.remove_node()
 
 
@@ -67,15 +68,18 @@ class Sigurd(ShowBase):
             return task.cont
         self.taskMgr.add(run_ecs, 'ECS')
 
-        level = ecs.Entity()
-        np_component = NodePathComponent('models/level')
-        np_component.nodepath.reparent_to(base.render)
-        level.add_component(np_component)
-        self.ecsmanager.add_entity(level)
+        self.ecsmanager.space.add_component(NodePathComponent())
+        spacenp = self.ecsmanager.space.get_component('NODEPATH').nodepath
+        spacenp.reparent_to(base.render)
 
-        player = ecs.Entity()
+        level = self.ecsmanager.create_entity()
+        np_component = NodePathComponent('models/level')
+        np_component.nodepath.reparent_to(spacenp)
+        level.add_component(np_component)
+
+        player = self.ecsmanager.create_entity()
         np_component = NodePathComponent()
-        np_component.nodepath.reparent_to(base.render)
+        np_component.nodepath.reparent_to(spacenp)
         base.camera.reparent_to(np_component.nodepath)
         base.camera.set_pos(0, 0, 1.7)
         base.camLens.set_near(0.1)
@@ -84,13 +88,12 @@ class Sigurd(ShowBase):
         player.add_component(PlayerComponent())
         player.add_component(WeaponComponent('katana'))
         player.add_component(HitBoxComponent())
-        self.ecsmanager.add_entity(player)
 
         # Add some enemies
         for i in range(5):
-            enemy = ecs.Entity()
+            enemy = self.ecsmanager.create_entity()
             np_component = NodePathComponent()
-            np_component.nodepath.reparent_to(base.render)
+            np_component.nodepath.reparent_to(spacenp)
             pos = (random.uniform(-7.3, 1.3), random.uniform(0.3, 7.6), 0)
             np_component.nodepath.set_pos(*pos)
             enemy.add_component(np_component)
@@ -98,8 +101,11 @@ class Sigurd(ShowBase):
             enemy.add_component(HitBoxComponent())
             enemy.add_component(WeaponComponent('katana'))
             enemy.add_component(AiComponent())
-            self.ecsmanager.add_entity(enemy)
 
+        def remove_space():
+            self.ecsmanager.remove_space()
+            self.render.ls()
+        self.accept('f1', remove_space)
         self.accept('quit-up', sys.exit)
         self.accept('aspectRatioChanged', self.cb_resize)
 

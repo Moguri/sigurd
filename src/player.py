@@ -31,6 +31,10 @@ class WeaponComponent(ecs.UniqueComponent):
         self.range = 1.0
         self.has_hit = False
 
+    def __del__(self):
+        super().__del__()
+        self.actor.remove_node()
+
 
 class CharacterComponent(ecs.UniqueComponent):
     __slots__ = [
@@ -70,14 +74,18 @@ class CharacterComponent(ecs.UniqueComponent):
         for t in ['track_one', 'track_two', 'track_three', 'track_four']:
             with open(os.path.join('tracks', t) + '.json') as f:
                 track_data = json.load(f)
-            track_entity = ecs.Entity()
+            track_entity = base.ecsmanager.create_entity()
             for component_data in track_data['components']:
                 component = globals()[component_data['name'] + 'EffectComponent'](component_data['args'])
                 track_entity.add_component(component)
-            base.ecsmanager.add_entity(track_entity)
             setattr(self, t, track_entity)
 
         self.current_health = self.health
+
+    def __del__(self):
+        super().__del__()
+        if self.actor:
+            self.actor.remove_node()
 
     @property
     def health(self):
@@ -270,7 +278,11 @@ class PlayerSystem(ecs.System, DirectObject):
         self.movement += move_delta
 
     def update(self, dt, components):
-        player = list(components['PLAYER'])[0]
+        try:
+            player = list(components['PLAYER'])[0]
+        except IndexError:
+            # TODO: for now, let the game still run if the player is missing
+            return
         pc = player.entity.get_component('CHARACTER')
         pc.movement = p3d.LVector3(self.movement)
         pc.action_set = pc.action_set.union(self.action_set)

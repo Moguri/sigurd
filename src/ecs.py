@@ -12,6 +12,10 @@ class Component(object):
     def __init__(self):
         self._is_unique = False
 
+    def __del__(self):
+        #print("__del__", self)
+        pass
+
     def cleanup(self):
         pass
 
@@ -38,12 +42,14 @@ class Entity(object):
         '_new_components',
         '__weakref__',
         'guid',
+        'space',
     ]
 
-    def __init__(self):
+    def __init__(self, space):
         self._components = {}
         self._new_components = {}
         self.guid = None
+        self.space = space
 
     def __del__(self):
         for k, v in self._components.items():
@@ -55,6 +61,7 @@ class Entity(object):
             for i in v:
                 i.cleanup()
         self._new_components.clear()
+        #print("__del__", self)
 
     def add_component(self, component):
         typeid = component.typeid
@@ -129,8 +136,18 @@ class ECSManager(object):
         self.entities = []
         self.systems = {}
         self.next_entity_guid = 0
+        self.space = Entity(None)
 
-    def add_entity(self, entity):
+    def create_entity(self):
+        # TODO allow for multiple spaces
+        if self.space is None:
+            raise RuntimeError("ECSManager.space is None")
+        entity = Entity(self.space)
+        self._add_entity(entity)
+
+        return entity
+
+    def _add_entity(self, entity):
         entity.guid = self.next_entity_guid
         self.next_entity_guid += 1
         self.entities.append(entity)
@@ -156,6 +173,15 @@ class ECSManager(object):
         if system_str not in self.systems:
             raise KeyError('No system found with the name of {}'.format(system_str))
         del self.systems[system_str]
+
+    def remove_space(self):
+        # TODO allow for multiple spaces
+        for entity in self.entities[:]:
+            if entity.space == self.space:
+                self.entities.remove(entity)
+
+        self.space = None
+
 
     def _get_components_by_type(self, component_list, component_types):
         components = {k: [] for k in component_types}
