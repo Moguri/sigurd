@@ -83,6 +83,7 @@ class Sigurd(ShowBase):
         player.add_component(CharacterComponent('melee'))
         player.add_component(PlayerComponent())
         player.add_component(WeaponComponent('katana'))
+        player.add_component(HitBoxComponent())
         self.ecsmanager.add_entity(player)
 
         # Add some enemies
@@ -95,6 +96,7 @@ class Sigurd(ShowBase):
             enemy.add_component(np_component)
             enemy.add_component(CharacterComponent('melee', 'demon'))
             enemy.add_component(HitBoxComponent())
+            enemy.add_component(WeaponComponent('katana'))
             enemy.add_component(AiComponent())
             self.ecsmanager.add_entity(enemy)
 

@@ -217,7 +217,8 @@ class CharacterSystem(ecs.System):
                     char.action_set.remove(track)
 
             # Resolve health and dying
-            if char.current_health <= 0:
+            # TODO make the player invincible for now
+            if char.current_health <= 0 and not char.entity.has_component('PLAYER'):
                 base.ecsmanager.remove_entity(char.entity)
 
 
@@ -350,4 +351,8 @@ class AiSystem(ecs.System):
             look_point = targetnp.get_pos()
             look_point.z = ainp.nodepath.get_pos().z
             ainp.nodepath.look_at(look_point, p3d.LVector3(0, 0, 1))
+
+            # Attack target
+            aichar = aicomp.entity.get_component('CHARACTER')
+            aichar.action_set.add('ATTACK')
 
