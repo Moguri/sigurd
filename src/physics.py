@@ -37,6 +37,11 @@ class HitBoxComponent(ecs.Component):
         self.physics_node.add_shape(shape, xform_state)
         self.physics_node.set_python_tag('component', self)
 
+    def cleanup(self):
+        self.physics_node.clear_python_tag('component')
+        psys = base.ecsmanager.get_system('PhysicsSystem')
+        psys.physics_world.remove(self.physics_node)
+
 
 class PhysicsSystem(ecs.System):
     __slots__ = [

@@ -219,6 +219,7 @@ class CharacterSystem(ecs.System):
             # Resolve health and dying
             # TODO make the player invincible for now
             if char.current_health <= 0 and not char.entity.has_component('PLAYER'):
+                char.entity.remove_component(char.entity.get_component('PHY_HITBOX'))
                 base.ecsmanager.remove_entity(char.entity)
 
 

@@ -12,6 +12,9 @@ class Component(object):
     def __init__(self):
         self._is_unique = False
 
+    def cleanup(self):
+        pass
+
     @property
     def entity(self):
         return self._entity()
@@ -42,6 +45,17 @@ class Entity(object):
         self._new_components = {}
         self.guid = None
 
+    def __del__(self):
+        for k, v in self._components.items():
+            for i in v:
+                i.cleanup()
+        self._components.clear()
+
+        for k, v in self._new_components.items():
+            for i in v:
+                i.cleanup()
+        self._new_components.clear()
+
     def add_component(self, component):
         typeid = component.typeid
 
@@ -71,6 +85,7 @@ class Entity(object):
         else:
             raise KeyError('Enity has no component with typeid of {}'.format(component.typeid))
 
+        component.cleanup()
         clist.remove(component)
         if not clist:
             del d[component.typeid]
