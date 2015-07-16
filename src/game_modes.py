@@ -40,14 +40,15 @@ class ClassicGameMode(GameMode):
         player.add_component(HitBoxComponent())
 
         # Add some enemies
-        for i in range(5):
+        enemy_types = ('melee', 'ranged')
+        for i in range(2):
             enemy = base.ecsmanager.create_entity()
             np_component = NodePathComponent()
             np_component.nodepath.reparent_to(spacenp)
             pos = (random.uniform(-7.3, 1.3), random.uniform(0.3, 7.6), 0)
             np_component.nodepath.set_pos(*pos)
             enemy.add_component(np_component)
-            enemy.add_component(CharacterComponent('melee', 'demon'))
+            enemy.add_component(CharacterComponent('melee', enemy_types[i]))
             enemy.add_component(HitBoxComponent())
             enemy.add_component(WeaponComponent('katana'))
             enemy.add_component(AiComponent())

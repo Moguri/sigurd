@@ -16,7 +16,7 @@
 }
 
 <Texture> diffuse {
-  "./textures/demon_diffuse.dds"
+  "./textures/melee_diffuse.dds"
   <Scalar> envtype { MODULATE }
   <Scalar> minfilter { LINEAR_MIPMAP_LINEAR }
   <Scalar> magfilter { LINEAR_MIPMAP_LINEAR }
