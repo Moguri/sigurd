@@ -140,11 +140,16 @@ class CharacterComponent(ecs.UniqueComponent):
 
 
 class PlayerComponent(ecs.UniqueComponent):
-    __slots__ = []
+    __slots__ = [
+        'camera_pivot',
+        'camera_offset',
+    ]
     typeid = 'PLAYER'
 
     def __init__(self):
         super().__init__()
+        self.camera_pivot = p3d.LVector3f(0, 0, 1.3)
+        self.camera_offset = p3d.LVector3f(0, 0.1, 0.17)
 
 
 Attack = collections.namedtuple('Attack', 'damage')
@@ -313,11 +318,17 @@ class PlayerSystem(ecs.System, DirectObject):
             base.win.move_pointer(0, halfx, halfy)
 
             self.camera_pitch += mouse.y * self.mousey_sensitivity
-            self.camera_pitch = clamp(self.camera_pitch, -75, 75)
+            self.camera_pitch = clamp(self.camera_pitch, -70, 60)
 
             pc.heading_delta += -mouse.x * self.mousex_sensitivity
 
-        base.camera.set_p(self.camera_pitch)
+        camera_mat = p3d.LMatrix4f().translate_mat(player.camera_offset)
+        rot_mat = p3d.LMatrix4f().rotate_mat(self.camera_pitch, p3d.LVector3f(1, 0, 0))
+        trans_mat = p3d.LMatrix4f().translate_mat(player.camera_pivot)
+
+        camera_mat = camera_mat * rot_mat * trans_mat
+        base.camera.set_mat(camera_mat)
+
 
 class EffectComponent(ecs.Component):
     __slots__ = [

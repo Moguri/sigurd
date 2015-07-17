@@ -64,7 +64,7 @@ class Sigurd(ShowBase):
         self.accept('aspectRatioChanged', self.cb_resize)
 
     def cb_resize(self):
-        vfov = 90
+        vfov = 70
         aspect = self.camLens.get_aspect_ratio()
         hfov = math.degrees(2 * math.atan(math.tan(math.radians(vfov)/2.0) * aspect))
         self.camLens.setFov(hfov, vfov)
