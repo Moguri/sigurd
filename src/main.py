@@ -14,6 +14,7 @@ import ecs
 import inputmapper
 import game_modes
 from player import *
+from effects import EffectSystem
 from physics import PhysicsSystem
 
 

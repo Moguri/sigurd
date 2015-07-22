@@ -9,6 +9,7 @@ from direct.showbase.DirectObject import DirectObject
 import panda3d.core as p3d
 
 import ecs
+import effects
 
 
 def clamp(value, lower, upper):
@@ -95,7 +96,7 @@ class CharacterComponent(ecs.UniqueComponent):
                 track_data = json.load(f)
             track_entity = base.ecsmanager.create_entity()
             for component_data in track_data['components']:
-                component = globals()[component_data['name'] + 'EffectComponent'](component_data['args'])
+                component = getattr(effects, component_data['name'] + 'EffectComponent')(component_data['args'])
                 track_entity.add_component(component)
             setattr(self, t, track_entity)
 
@@ -328,44 +329,6 @@ class PlayerSystem(ecs.System, DirectObject):
 
         camera_mat = camera_mat * rot_mat * trans_mat
         base.camera.set_mat(camera_mat)
-
-
-class EffectComponent(ecs.Component):
-    __slots__ = [
-        'cmd_queue',
-        'effect_type'
-    ]
-    typeid = 'EFFECT'
-
-    def __init__(self):
-        super().__init__()
-        self.cmd_queue = set()
-
-class PrintEffectComponent(EffectComponent):
-    __slots__ = ['message']
-    effect_type = 'PRINT'
-
-    def __init__(self, effect_data):
-        super().__init__()
-        EffectComponent.__init__(self)
-        self.message = effect_data['message']
-
-class EffectSystem(ecs.System):
-    __slots__ = []
-
-    component_types = [
-        'EFFECT',
-    ]
-
-    def update(self, dt, components):
-        for component in components['EFFECT']:
-            cfunc = component.effect_type.lower() + '_effect'
-            if 'ACTIVATE' in component.cmd_queue:
-                getattr(self, cfunc)(dt, component)
-                component.cmd_queue.remove('ACTIVATE')
-
-    def print_effect(self, dt, component):
-        print(component.message)
 
 
 class AiComponent(ecs.UniqueComponent):
