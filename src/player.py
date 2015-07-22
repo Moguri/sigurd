@@ -79,7 +79,6 @@ class CharacterComponent(ecs.UniqueComponent):
 
     def __init__(self, chassis, mesh=None):
         super().__init__()
-        self.speed = p3d.LVector3f(0.04, 0.04, 0.0)
         self.movement = p3d.LVector3f(0, 0, 0)
         self.heading_delta = 0
         self.actor = None
@@ -186,10 +185,11 @@ class CharacterSystem(ecs.System):
             nodepath = char.entity.get_component('NODEPATH').nodepath
 
             # Position
+            char_speed = p3d.LVector3f(char.move_speed / 10000.0, char.move_speed / 10000.0, 0.0)
             if char.movement.length_squared() > 0.0:
                 new_pos = nodepath.getMat(base.render).xformVec(char.movement)
                 new_pos.normalize()
-                new_pos.componentwiseMult(char.speed)
+                new_pos.componentwiseMult(char_speed)
                 new_pos += nodepath.get_pos()
                 nodepath.set_pos(new_pos)
                 char.action_set.discard('ATTACK_MOVE')
@@ -239,7 +239,7 @@ class CharacterSystem(ecs.System):
                             self._attack_queues[char.target_entity_guid].append(Attack(1))
                     else:
                         vec_to.normalize()
-                        vec_to.componentwiseMult(char.speed)
+                        vec_to.componentwiseMult(char_speed)
                         new_pos = nodepath.get_pos() + vec_to
                         nodepath.set_pos(new_pos)
 
