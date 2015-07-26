@@ -72,6 +72,8 @@ class CharacterComponent(ecs.UniqueComponent):
         'track_three',
         'track_four',
         'current_health',
+        'recoil_duration',
+        'recoil_timer',
     ]
 
     typeid = 'CHARACTER'
@@ -98,6 +100,8 @@ class CharacterComponent(ecs.UniqueComponent):
             setattr(self, t, track_entity)
 
         self.current_health = self.health
+        self.recoil_duration = 0.35
+        self.recoil_timer = self.recoil_duration + 1.0
 
     @property
     def health(self):
@@ -207,7 +211,8 @@ class CharacterSystem(ecs.System):
                 actor = char.entity.get_component('ACTOR').actor
 
             if actor:
-                actor.play('idle')
+                actor.disableBlend()
+                actor.pose('idle', 0)
 
             # Position
             char_speed = p3d.LVector3f(char.move_speed / 10000.0, char.move_speed / 10000.0, 0.0)
@@ -227,6 +232,7 @@ class CharacterSystem(ecs.System):
             # Resolve attacks
             for attack in self._attack_queues[char.entity.guid]:
                 char.current_health -= attack.damage
+                char.recoil_timer = 0.0
             self._attack_queues[char.entity.guid].clear()
 
             if 'ATTACK' in char.action_set:
@@ -279,6 +285,24 @@ class CharacterSystem(ecs.System):
             if char.current_health <= 0 and not char.entity.has_component('PLAYER'):
                 char.entity.remove_component(char.entity.get_component('PHY_HITBOX'))
                 base.ecsmanager.remove_entity(char.entity)
+
+            # Resolve recoil
+            if char.recoil_timer < char.recoil_duration:
+                char.recoil_timer += dt
+
+                if actor:
+                    t = min(char.recoil_timer / char.recoil_duration, 1.0)
+                    mid_p = 0.33
+                    if t > mid_p:
+                        t = (t - mid_p) / (1.0 - mid_p)
+                        t = 1.0 - t
+                    else:
+                        t /= mid_p
+                    actor.enableBlend()
+                    actor.setControlEffect('idle', 1 - t)
+                    actor.setControlEffect('hit', t)
+                    actor.pose('idle', 0)
+                    actor.pose('hit', 0)
 
 
 class PlayerSystem(ecs.System, DirectObject):
