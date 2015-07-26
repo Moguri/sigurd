@@ -23,7 +23,7 @@ class ClassicGameMode(GameMode):
         spacenp.reparent_to(base.render)
 
         level = base.ecsmanager.create_entity()
-        np_component = NodePathComponent('models/level')
+        np_component = NodePathComponent('models/new_level')
         np_component.nodepath.reparent_to(spacenp)
         level.add_component(np_component)
 
