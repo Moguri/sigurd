@@ -61,7 +61,6 @@ class CharacterComponent(ecs.UniqueComponent):
         'speed',
         'movement',
         'heading_delta',
-        'actor',
         'mesh_name',
         '_chassis',
         'level',
@@ -81,7 +80,6 @@ class CharacterComponent(ecs.UniqueComponent):
         super().__init__()
         self.movement = p3d.LVector3f(0, 0, 0)
         self.heading_delta = 0
-        self.actor = None
         self.mesh_name = mesh
 
         self.level = 1
@@ -100,11 +98,6 @@ class CharacterComponent(ecs.UniqueComponent):
             setattr(self, t, track_entity)
 
         self.current_health = self.health
-
-    def __del__(self):
-        super().__del__()
-        if self.actor:
-            self.actor.remove_node()
 
     @property
     def health(self):
@@ -139,6 +132,26 @@ class CharacterComponent(ecs.UniqueComponent):
         return self._chassis['magic_resistance'] + self._chassis['magic_resistance_per_lvl'] * self.level - 1
 
 
+class ActorComponent(ecs.UniqueComponent):
+    __slots__ = [
+        'name',
+        'actor',
+        'anim_controls',
+    ]
+    typeid = 'ACTOR'
+
+    def __init__(self, name):
+        super().__init__()
+        self.name = name
+        self.actor = None
+        self.anim_controls = {}
+
+    def __del__(self):
+        super().__del__()
+        if self.actor:
+            self.actor.remove_node()
+
+
 class PlayerComponent(ecs.UniqueComponent):
     __slots__ = [
         'camera_pivot',
@@ -157,6 +170,7 @@ Attack = collections.namedtuple('Attack', 'damage')
 
 class CharacterSystem(ecs.System):
     component_types = [
+        'ACTOR',
         'CHARACTER',
         'WEAPON',
     ]
@@ -174,11 +188,13 @@ class CharacterSystem(ecs.System):
             weapon.actor.reparent_to(np_component.nodepath)
 
         for char in components.get('CHARACTER', []):
-            if char.mesh_name:
-                char.actor = Actor('models/{}'.format(char.mesh_name))
-                np_component = char.entity.get_component('NODEPATH')
-                char.actor.reparent_to(np_component.nodepath)
             self._attack_queues[char.entity.guid] = []
+
+        for comp in components.get('ACTOR', []):
+            path = 'models/{}/'.format(comp.name)
+            comp.actor = Actor(path + 'actor')
+            np_component = comp.entity.get_component('NODEPATH')
+            comp.actor.reparent_to(np_component.nodepath)
 
     def update(self, dt, components):
         for char in components['CHARACTER']:
