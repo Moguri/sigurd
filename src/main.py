@@ -53,7 +53,7 @@ class Sigurd(ShowBase):
         self.game_mode = game_modes.ClassicGameMode()
 
         def run_ecs(task):
-            self.ecsmanager.update(0)
+            self.ecsmanager.update(globalClock.get_dt())
             if self.game_mode.is_game_over():
                 print("Game over, restarting")
                 messenger.send('restart-game')
