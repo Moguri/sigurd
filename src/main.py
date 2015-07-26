@@ -29,6 +29,12 @@ class Sigurd(ShowBase):
         light_np.set_hpr(p3d.VBase3(-135.0, -45.0, 0.0))
         self.render.set_light(light_np)
 
+        light = p3d.DirectionalLight('indirect')
+        light.set_color(p3d.VBase4(0.15, 0.15, 0.15, 1.0))
+        light_np = self.render.attach_new_node(light)
+        light_np.set_hpr(p3d.VBase3(45.0, 45.0, 0.0))
+        self.render.set_light(light_np)
+
         wp = p3d.WindowProperties()
         wp.set_cursor_hidden(True)
         wp.set_mouse_mode(p3d.WindowProperties.MRelative)
