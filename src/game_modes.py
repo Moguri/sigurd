@@ -46,7 +46,7 @@ class ClassicGameMode(GameMode):
             enemy = base.ecsmanager.create_entity()
             np_component = NodePathComponent()
             np_component.nodepath.reparent_to(spacenp)
-            pos = (random.uniform(-7.3, 1.3), random.uniform(0.3, 7.6), 0)
+            pos = (random.uniform(-6.5, 6.5), random.uniform(0.0, 13), 0)
             np_component.nodepath.set_pos(*pos)
             enemy.add_component(np_component)
             enemy.add_component(CharacterComponent('melee'))
