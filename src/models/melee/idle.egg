@@ -1,0 +1,617 @@
+<CoordinateSystem> { Z-up } 
+<Table> {
+  <Bundle> rig.baked {
+    <Table> "<skeleton>" {
+      <Table> root {
+        <Xfm$Anim> xform {
+          <Scalar> order { sprht }
+          <Scalar> fps { 60 }
+          <Scalar> contents { ijkprhxyz }
+          <V> {
+            1.000000 1.000000 1.000000 90.000003 -0.000000 179.999991 0.000000 0.000000 0.000000
+          }
+        }
+        <Table> dummy {
+          <Xfm$Anim> xform {
+            <Scalar> order { sprht }
+            <Scalar> fps { 60 }
+            <Scalar> contents { ijkprhxyz }
+            <V> {
+              1.000000 1.000000 1.000000 -90.000003 -0.000000 0.000000 0.000000 0.000000 0.000000
+            }
+          }
+          <Table> DEF-foot.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -155.154482 0.000026 0.000003 -0.179711 0.012111 0.063690
+              }
+            }
+          }
+          <Table> DEF-shin.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -48.190150 7.970299 -0.220013 -0.139324 -0.255178 0.359473
+              }
+            }
+          }
+          <Table> DEF-thigh.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -121.199548 11.095401 -3.196236 -0.078172 -0.094407 0.625101
+              }
+            }
+          }
+          <Table> DEF-foot.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -155.154454 -0.000029 -0.000017 0.179711 0.012110 0.063690
+              }
+            }
+          }
+          <Table> DEF-shin.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -48.190164 -7.970299 0.220016 0.139324 -0.255178 0.359473
+              }
+            }
+          }
+          <Table> DEF-thigh.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -121.199548 -11.095400 3.196239 0.078172 -0.094407 0.625101
+              }
+            }
+          }
+          <Table> DEF-hips {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 102.333173 -0.000001 -0.000002 -0.000000 -0.062413 0.609795
+              }
+            }
+          }
+          <Table> DEF-hand.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -92.251629 50.796605 67.043095 0.244711 -0.331549 0.569234
+              }
+            }
+          }
+          <Table> DEF-forearm.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -76.328573 13.104848 114.666582 0.275375 -0.256950 0.805468
+              }
+            }
+          }
+          <Table> DEF-upper_arm.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -108.055840 17.549707 107.620900 0.188500 -0.216168 1.011527
+              }
+            }
+          }
+          <Table> DEF-hand.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -86.878852 -24.395079 -77.968460 -0.281613 -0.355939 0.590628
+              }
+            }
+          }
+          <Table> DEF-forearm.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -71.351045 -18.571459 -128.039163 -0.298062 -0.247425 0.814829
+              }
+            }
+          }
+          <Table> DEF-upper_arm.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -110.160303 -22.809944 -120.635429 -0.188500 -0.216168 1.011527
+              }
+            }
+          }
+          <Table> DEF-spine {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 112.355956 -0.000001 -0.000001 -0.000000 -0.090819 0.739718
+              }
+            }
+          }
+          <Table> DEF-toe.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 0.000027 -0.000004 -179.999964 -0.179711 -0.098480 0.012483
+              }
+            }
+          }
+          <Table> DEF-toe.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 0.000026 0.000000 -179.999964 0.179711 -0.098480 0.012483
+              }
+            }
+          }
+          <Table> DEF-chest {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 115.725329 0.000000 0.000000 -0.000000 -0.136026 0.849637
+              }
+            }
+          }
+          <Table> DEF-neck {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 133.317656 -0.000002 -0.000002 -0.000000 -0.238752 1.062845
+              }
+            }
+          }
+          <Table> DEF-shoulder.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 8.973973 -26.170886 69.622174 -0.013680 -0.273099 0.999960
+              }
+            }
+          }
+          <Table> DEF-palm.04.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -80.395896 -2.351820 -73.818267 -0.285290 -0.351497 0.558563
+              }
+            }
+          }
+          <Table> DEF-f_pinky.01.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -54.476964 6.887338 -68.995272 -0.273673 -0.350980 0.491830
+              }
+            }
+          }
+          <Table> DEF-f_pinky.02.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -20.800219 8.296383 -71.545999 -0.262353 -0.344302 0.473804
+              }
+            }
+          }
+          <Table> DEF-f_pinky.03.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 12.977911 4.254158 -73.128998 -0.246589 -0.338063 0.467441
+              }
+            }
+          }
+          <Table> DEF-palm.03.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -88.935347 -14.521261 -78.868679 -0.284058 -0.362868 0.560329
+              }
+            }
+          }
+          <Table> DEF-f_ring.01.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -69.963458 -9.346578 -75.403963 -0.279664 -0.378849 0.496515
+              }
+            }
+          }
+          <Table> DEF-f_ring.02.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -29.416167 -8.839199 -80.564171 -0.267617 -0.380845 0.466335
+              }
+            }
+          }
+          <Table> DEF-f_ring.03.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -0.344321 -15.557964 -77.998356 -0.248357 -0.379335 0.455611
+              }
+            }
+          }
+          <Table> DEF-palm.02.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -94.655480 -23.923552 -80.284291 -0.281763 -0.373780 0.563792
+              }
+            }
+          }
+          <Table> DEF-f_middle.01.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -71.452945 -24.101067 -75.090635 -0.282532 -0.400705 0.504260
+              }
+            }
+          }
+          <Table> DEF-f_middle.02.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -33.858030 -23.522801 -80.132831 -0.267365 -0.411599 0.472005
+              }
+            }
+          }
+          <Table> DEF-f_middle.03.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -5.369525 -23.677298 -78.339353 -0.244980 -0.413606 0.458651
+              }
+            }
+          }
+          <Table> DEF-palm.01.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -91.997204 -33.249241 -82.173774 -0.277416 -0.383651 0.570818
+              }
+            }
+          }
+          <Table> DEF-thumb.01.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -159.794147 -26.444988 2.910027 -0.268219 -0.375619 0.592212
+              }
+            }
+          }
+          <Table> DEF-thumb.02.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -144.528756 0.436775 18.556698 -0.260781 -0.409969 0.580782
+              }
+            }
+          }
+          <Table> DEF-thumb.03.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -142.401467 -0.484498 17.000054 -0.251421 -0.438363 0.559481
+              }
+            }
+          }
+          <Table> DEF-f_index.01.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -72.422237 -38.823004 -76.900424 -0.274765 -0.419841 0.515580
+              }
+            }
+          }
+          <Table> DEF-f_index.02.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -41.474312 -35.600503 -75.755582 -0.261220 -0.436038 0.492160
+              }
+            }
+          }
+          <Table> DEF-f_index.03.R {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -3.981898 -36.065158 -76.403186 -0.243958 -0.440020 0.480838
+              }
+            }
+          }
+          <Table> DEF-shoulder.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 8.973973 26.170886 -69.622181 0.013680 -0.273099 0.999960
+              }
+            }
+          }
+          <Table> DEF-palm.04.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -83.245615 28.465800 64.634176 0.245831 -0.342227 0.538474
+              }
+            }
+          }
+          <Table> DEF-f_pinky.01.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -54.872524 18.922278 60.062559 0.224896 -0.367784 0.479338
+              }
+            }
+          }
+          <Table> DEF-f_pinky.02.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -26.730379 17.504918 62.719578 0.210821 -0.366507 0.462078
+              }
+            }
+          }
+          <Table> DEF-f_pinky.03.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 0.935039 21.682120 63.960630 0.195323 -0.361271 0.454310
+              }
+            }
+          }
+          <Table> DEF-palm.03.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -91.690898 41.023188 69.412788 0.243533 -0.351365 0.545193
+              }
+            }
+          }
+          <Table> DEF-f_ring.01.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -69.932743 35.644541 65.514485 0.230144 -0.392543 0.495473
+              }
+            }
+          }
+          <Table> DEF-f_ring.02.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -33.299409 35.010259 71.743487 0.212591 -0.404130 0.470622
+              }
+            }
+          }
+          <Table> DEF-f_ring.03.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -12.806656 41.496145 67.842124 0.192872 -0.404955 0.460685
+              }
+            }
+          }
+          <Table> DEF-palm.02.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -98.151663 50.493765 70.423854 0.240394 -0.359202 0.553258
+              }
+            }
+          }
+          <Table> DEF-f_middle.01.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -74.072131 50.231499 62.990498 0.232402 -0.409326 0.512110
+              }
+            }
+          }
+          <Table> DEF-f_middle.02.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -39.708357 49.724009 70.179101 0.210780 -0.429226 0.489183
+              }
+            }
+          }
+          <Table> DEF-f_middle.03.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -19.150799 49.692515 67.626953 0.187538 -0.434393 0.478386
+              }
+            }
+          }
+          <Table> DEF-palm.01.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -95.007289 59.900998 72.369734 0.235672 -0.364260 0.564112
+              }
+            }
+          }
+          <Table> DEF-thumb.01.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 170.696044 24.124442 -23.306185 0.229453 -0.346441 0.579941
+              }
+            }
+          }
+          <Table> DEF-thumb.02.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -170.461222 -6.676705 -24.466697 0.217268 -0.380905 0.585394
+              }
+            }
+          }
+          <Table> DEF-thumb.03.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -168.319398 -5.166638 -23.466030 0.202917 -0.414146 0.579353
+              }
+            }
+          }
+          <Table> DEF-f_index.01.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -77.122179 65.005089 61.911526 0.223917 -0.420293 0.531093
+              }
+            }
+          }
+          <Table> DEF-f_index.02.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -53.437665 61.715472 60.509500 0.204600 -0.441565 0.518105
+              }
+            }
+          }
+          <Table> DEF-f_index.03.L {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 -22.238258 62.277344 61.402520 0.186379 -0.448344 0.510102
+              }
+            }
+          }
+          <Table> DEF-head {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 60 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 85.566663 -0.000002 -0.000014 -0.000000 -0.298832 1.126560
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

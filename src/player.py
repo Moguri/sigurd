@@ -192,13 +192,22 @@ class CharacterSystem(ecs.System):
 
         for comp in components.get('ACTOR', []):
             path = 'models/{}/'.format(comp.name)
-            comp.actor = Actor(path + 'actor')
+            anim_files = [os.path.splitext(f)[0] for f in os.listdir(path) if f.endswith('.egg') and f != 'actor.egg']
+            anim_dict = {name: path + name for name in anim_files}
+            comp.actor = Actor(path + 'actor', anim_dict)
             np_component = comp.entity.get_component('NODEPATH')
             comp.actor.reparent_to(np_component.nodepath)
 
     def update(self, dt, components):
         for char in components['CHARACTER']:
             nodepath = char.entity.get_component('NODEPATH').nodepath
+
+            actor = None
+            if char.entity.has_component('ACTOR'):
+                actor = char.entity.get_component('ACTOR').actor
+
+            if actor:
+                actor.play('idle')
 
             # Position
             char_speed = p3d.LVector3f(char.move_speed / 10000.0, char.move_speed / 10000.0, 0.0)
