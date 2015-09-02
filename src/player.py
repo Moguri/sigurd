@@ -251,7 +251,8 @@ class CharacterSystem(ecs.System):
                 actor.pose('idle', 0)
 
             # Position
-            char_speed = p3d.LVector3f(char.move_speed / 10000.0, char.move_speed / 10000.0, 0.0)
+            ms = char.move_speed * dt / 50.0
+            char_speed = p3d.LVector3f(ms, ms, 0.0)
             if char.movement.length_squared() > 0.0:
                 new_pos = nodepath.getMat(base.render).xformVec(char.movement)
                 new_pos.normalize()
