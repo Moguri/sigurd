@@ -10,9 +10,12 @@ p3d.load_prc_file('config/engine.prc')
 if os.path.exists(os.path.join('config', 'user.prc')):
     p3d.load_prc_file('config/user.prc')
 
-import ecs
+if 'server' in sys.argv:
+    p3d.load_prc_file_data('', 'window-type none')
+
 import inputmapper
 import game_modes
+import network
 from player import *
 from effects import EffectSystem
 from physics import PhysicsSystem
@@ -35,20 +38,27 @@ class Sigurd(ShowBase):
         light_np.set_hpr(p3d.VBase3(45.0, 45.0, 0.0))
         self.render.set_light(light_np)
 
-        wp = p3d.WindowProperties()
-        wp.set_cursor_hidden(True)
-        wp.set_mouse_mode(p3d.WindowProperties.MRelative)
-        base.win.requestProperties(wp)
-        self.disableMouse()
+        if base.win:
+            wp = p3d.WindowProperties()
+            wp.set_cursor_hidden(True)
+            wp.set_mouse_mode(p3d.WindowProperties.MRelative)
+            base.win.requestProperties(wp)
+            self.disableMouse()
 
         self.inputmapper = inputmapper.InputMapper('input.conf')
 
         self.ecsmanager = ecs.ECSManager()
-        self.ecsmanager.add_system(PlayerSystem())
         self.ecsmanager.add_system(CharacterSystem())
         self.ecsmanager.add_system(PhysicsSystem())
         self.ecsmanager.add_system(EffectSystem())
         self.ecsmanager.add_system(AiSystem())
+
+        is_server = 'server' in sys.argv
+        self.network_manager = network.NetworkManager(self.ecsmanager, network.PandaTransportLayer, is_server)
+        if is_server:
+            self.network_manager.start_server(9999)
+        else:
+            self.network_manager.start_client('localhost', 9999)
 
         self.game_mode = game_modes.ClassicGameMode()
 
@@ -59,6 +69,16 @@ class Sigurd(ShowBase):
                 messenger.send('restart-game')
             return task.cont
         self.taskMgr.add(run_ecs, 'ECS')
+
+        def run_net(task):
+            self.network_manager.update(globalClock.get_dt())
+            return task.cont
+        self.taskMgr.add(run_net, 'Network')
+
+        def run_gamemode(task):
+            self.game_mode.update(globalClock.get_dt())
+            return task.cont
+        self.taskMgr.add(run_gamemode, 'Game Mode')
 
         def restart_game():
             self.game_mode.end_game()

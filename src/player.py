@@ -19,12 +19,15 @@ def clamp(value, lower, upper):
 class NodePathComponent(ecs.Component):
     __slots__ = [
         'nodepath',
+        '_modelpath'
     ]
 
     typeid = 'NODEPATH'
 
     def __init__(self, modelpath=None):
         super().__init__()
+        self.synchronize = True
+        self._modelpath = modelpath if modelpath else ''
         if modelpath is not None:
             self.nodepath = base.loader.loadModel(modelpath)
         else:
@@ -33,6 +36,19 @@ class NodePathComponent(ecs.Component):
     def __del__(self):
         super().__del__()
         self.nodepath.remove_node()
+
+    def serialize(self):
+        d = super().serialize()
+        d['modelpath'] = self._modelpath
+        d['position'] = list(self.nodepath.get_pos())
+        d['rotation'] = list(self.nodepath.get_hpr())
+
+        return d
+
+    def update(self, cdata):
+        self.nodepath.set_pos(p3d.LVector3(*cdata['position']))
+        self.nodepath.set_hpr(p3d.LVector3(*cdata['rotation']))
+        self.nodepath.reparent_to(base.ecsmanager.space.get_component('NODEPATH').nodepath)
 
 
 class WeaponComponent(ecs.UniqueComponent):
@@ -44,16 +60,29 @@ class WeaponComponent(ecs.UniqueComponent):
     ]
     typeid = 'WEAPON'
 
-    def __init__(self, name):
+    def __init__(self, name=''):
         super().__init__()
         self.name = name
         self.actor = None
         self.range = 1.0
         self.has_hit = False
+        self.synchronize = True
 
     def __del__(self):
         super().__del__()
         self.actor.remove_node()
+
+    def serialize(self):
+        d = super().serialize()
+        d['name'] = self.name
+        d['anim_name'] = self.actor.getCurrentAnim()
+        d['anim_frame'] = self.actor.getCurrentFrame(d['anim_name'])
+        return d
+
+    def update(self, cdata):
+        self.name = cdata['name']
+        if self.actor:
+            self.actor.pose(cdata['anim_name'], cdata['anim_frame'])
 
 
 class CharacterComponent(ecs.UniqueComponent):
@@ -99,7 +128,8 @@ class CharacterComponent(ecs.UniqueComponent):
                 track_entity.add_component(component)
             setattr(self, t, track_entity)
 
-        self.current_health = self.health
+        self.current_health = self.health if self._chassis else None
+
         self.recoil_duration = 0.35
         self.recoil_timer = self.recoil_duration + 1.0
 
@@ -144,8 +174,9 @@ class ActorComponent(ecs.UniqueComponent):
     ]
     typeid = 'ACTOR'
 
-    def __init__(self, name):
+    def __init__(self, name=''):
         super().__init__()
+        self.synchronize = True
         self.name = name
         self.actor = None
         self.anim_controls = {}
@@ -155,18 +186,23 @@ class ActorComponent(ecs.UniqueComponent):
         if self.actor:
             self.actor.remove_node()
 
+    def serialize(self):
+        d = super().serialize()
+        d['name'] = self.name
+        d['anim_name'] = self.actor.getCurrentAnim()
+        d['anim_frame'] = self.actor.getCurrentFrame(d['anim_name'])
+        return d
+
+    def update(self, cdata):
+        self.name = cdata['name']
+        if self.actor:
+            self.actor.pose(cdata['anim_name'], cdata['anim_frame'])
+
 
 class PlayerComponent(ecs.UniqueComponent):
     __slots__ = [
-        'camera_pivot',
-        'camera_offset',
     ]
     typeid = 'PLAYER'
-
-    def __init__(self):
-        super().__init__()
-        self.camera_pivot = p3d.LVector3f(0, 0, 1.3)
-        self.camera_offset = p3d.LVector3f(0, 0.1, 0.17)
 
 
 Attack = collections.namedtuple('Attack', 'damage')
@@ -305,81 +341,6 @@ class CharacterSystem(ecs.System):
                     actor.pose('hit', 0)
 
 
-class PlayerSystem(ecs.System, DirectObject):
-    component_types = [
-        'PLAYER',
-    ]
-
-    def __init__(self):
-        self.movement = p3d.LVector3f(0, 0, 0)
-        self.action_set = set()
-        self.camera_pitch = 0
-        self.mousex_sensitivity = 25
-        self.mousey_sensitivity = 25
-
-        self.accept('move-forward', self.update_movement, ['forward', True])
-        self.accept('move-forward-up', self.update_movement, ['forward', False])
-        self.accept('move-backward', self.update_movement, ['backward', True])
-        self.accept('move-backward-up', self.update_movement, ['backward', False])
-        self.accept('move-left', self.update_movement, ['left', True])
-        self.accept('move-left-up', self.update_movement, ['left', False])
-        self.accept('move-right', self.update_movement, ['right', True])
-        self.accept('move-right-up', self.update_movement, ['right', False])
-        self.accept('attack', self.add_action, ['ATTACK'])
-        self.accept('track-one', self.add_action, ['TRACK_ONE'])
-        self.accept('track-two', self.add_action, ['TRACK_TWO'])
-        self.accept('track-three', self.add_action, ['TRACK_THREE'])
-        self.accept('track-four', self.add_action, ['TRACK_FOUR'])
-
-    def add_action(self, action):
-        self.action_set.add(action)
-
-    def update_movement(self, direction, activate):
-        move_delta = p3d.LVector3(0, 0, 0)
-
-        if direction == 'forward':
-            move_delta.set_y(1)
-        elif direction == 'backward':
-            move_delta.set_y(-1)
-        elif direction == 'left':
-            move_delta.set_x(-1)
-        elif direction == 'right':
-            move_delta.set_x(1)
-
-        if not activate:
-            move_delta *= -1
-
-        self.movement += move_delta
-
-    def update(self, dt, components):
-        try:
-            player = list(components['PLAYER'])[0]
-        except IndexError:
-            # TODO: for now, let the game still run if the player is missing
-            return
-        pc = player.entity.get_component('CHARACTER')
-        pc.movement = p3d.LVector3(self.movement)
-        pc.action_set = pc.action_set.union(self.action_set)
-        self.action_set.clear()
-        if base.mouseWatcherNode.has_mouse():
-            mouse = base.mouseWatcherNode.get_mouse()
-            halfx = base.win.get_x_size() // 2
-            halfy = base.win.get_y_size() // 2
-            base.win.move_pointer(0, halfx, halfy)
-
-            self.camera_pitch += mouse.y * self.mousey_sensitivity
-            self.camera_pitch = clamp(self.camera_pitch, -70, 60)
-
-            pc.heading_delta += -mouse.x * self.mousex_sensitivity
-
-        camera_mat = p3d.LMatrix4f().translate_mat(player.camera_offset)
-        rot_mat = p3d.LMatrix4f().rotate_mat(self.camera_pitch, p3d.LVector3f(1, 0, 0))
-        trans_mat = p3d.LMatrix4f().translate_mat(player.camera_pivot)
-
-        camera_mat = camera_mat * rot_mat * trans_mat
-        base.camera.set_mat(camera_mat)
-
-
 class AiComponent(ecs.UniqueComponent):
     __slots__ = [
 
@@ -397,7 +358,11 @@ class AiSystem(ecs.System):
     def update(self, dt, components):
         for aicomp in components['AI']:
             # Pick target
-            target = components['PLAYER'][0]
+            try:
+                target = components['PLAYER'][0]
+            except IndexError:
+                continue
+
             targetnp = target.entity.get_component('NODEPATH').nodepath
 
             # Face target

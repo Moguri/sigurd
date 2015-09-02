@@ -1,16 +1,20 @@
 import weakref
-import itertools
+import importlib
 
 
 class Component(object):
     __slots__ = [
         '_entity',
         'typeid',
+        'synchronize',
         '_is_unique',
+        '_import_string',
     ]
 
     def __init__(self):
         self._is_unique = False
+        self.synchronize = False
+        self._import_string = self.__class__.__module__ + '.' + self.__class__.__name__
 
     def __del__(self):
         #print("__del__", self)
@@ -26,6 +30,9 @@ class Component(object):
     @property
     def is_unique(self):
         return self._is_unique
+
+    def serialize(self):
+        return {'import_string': self._import_string}
 
 
 class UniqueComponent(Component):
@@ -43,6 +50,7 @@ class Entity(object):
         '__weakref__',
         'guid',
         'space',
+        'netid',
     ]
 
     def __init__(self, space):
@@ -50,6 +58,7 @@ class Entity(object):
         self._new_components = {}
         self.guid = None
         self.space = space
+        self.netid = 0
 
     def __del__(self):
         for k, v in self._components.items():
@@ -114,6 +123,36 @@ class Entity(object):
     def has_component(self, typeid):
         return typeid in self._components or typeid in self._new_components
 
+    def serialize(self):
+        d = {}
+        for typeid, clist in self._components.items():
+            d[typeid] = []
+            for component in clist:
+                if component.synchronize:
+                    d[typeid].append(component.serialize())
+            if not d[typeid]:
+                del d[typeid]
+
+        return d
+
+    def update(self, netid, d):
+        self.netid = netid
+        #print(self.netid, d)
+        for typeid, clist in d.items():
+            for i, cdata in enumerate(clist):
+                mod_parts = cdata['import_string'].split('.')
+                cmod = '.'.join(mod_parts[:-1])
+                cclass = mod_parts[-1]
+
+                try:
+                    component = self.get_components(typeid)[i]
+                except (IndexError, KeyError):
+                    mod = importlib.import_module(cmod)
+                    component = getattr(mod, cclass)()
+                    self.add_component(component)
+
+                component.update(cdata)
+
 
 class System(object):
     __slots__ = [
@@ -137,6 +176,7 @@ class ECSManager(object):
         self.systems = {}
         self.next_entity_guid = 0
         self.space = Entity(None)
+        self.removed_entities = set()
 
     def create_entity(self):
         # TODO allow for multiple spaces
@@ -153,6 +193,8 @@ class ECSManager(object):
         self.entities.append(entity)
 
     def remove_entity(self, entity):
+        if entity.netid != 0:
+            self.removed_entities.add(entity.netid)
         self.entities.remove(entity)
 
     def add_system(self, system):
@@ -182,7 +224,6 @@ class ECSManager(object):
 
         self.space = None
 
-
     def _get_components_by_type(self, component_list, component_types):
         components = {k: [] for k in component_types}
         for entity in self.entities:
@@ -207,3 +248,4 @@ class ECSManager(object):
 
         for system in self.systems.values():
             system.update(dt, self._get_components_by_type('_components', system.component_types))
+
