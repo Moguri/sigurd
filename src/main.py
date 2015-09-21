@@ -4,6 +4,7 @@ import sys
 import os
 import subprocess
 import time
+import atexit
 
 from direct.showbase.ShowBase import ShowBase
 import panda3d.core as p3d
@@ -59,7 +60,12 @@ class Sigurd(ShowBase):
         host = sys.argv[3] if len(sys.argv) >= 3 else 'localhost'
         if len(sys.argv) == 1 or sys.argv[1] == 'stand-alone':
             is_server = False
-            subprocess.Popen(['python', 'main.py', 'server', str(port), str(host)])
+            proc = subprocess.Popen(['python', 'main.py', 'server', str(port), str(host)])
+            def kill_server():
+                if proc:
+                    print('Terminating stand-alone server')
+                    proc.terminate()
+            atexit.register(kill_server)
             time.sleep(1)
         elif sys.argv[1] == 'server':
             is_server = True
