@@ -2,6 +2,8 @@
 import math
 import sys
 import os
+import subprocess
+import time
 
 from direct.showbase.ShowBase import ShowBase
 import panda3d.core as p3d
@@ -53,12 +55,20 @@ class Sigurd(ShowBase):
         self.ecsmanager.add_system(EffectSystem())
         self.ecsmanager.add_system(AiSystem())
 
-        is_server = 'server' in sys.argv
+        port = int(sys.argv[2]) if len(sys.argv) >= 2 else 9999
+        host = sys.argv[3] if len(sys.argv) >= 3 else 'localhost'
+        if len(sys.argv) == 1 or sys.argv[1] == 'stand-alone':
+            is_server = False
+            subprocess.Popen(['python', 'main.py', 'server', str(port), str(host)])
+            time.sleep(1)
+        elif sys.argv[1] == 'server':
+            is_server = True
+
         self.network_manager = network.NetworkManager(self.ecsmanager, network.PandaTransportLayer, is_server)
         if is_server:
-            self.network_manager.start_server(9999)
+            self.network_manager.start_server(port)
         else:
-            self.network_manager.start_client('localhost', 9999)
+            self.network_manager.start_client(host, port)
 
         self.game_mode = game_modes.ClassicGameMode()
 
