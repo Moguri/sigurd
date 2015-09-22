@@ -122,9 +122,7 @@ class PandaTransportLayer(BaseTransportLayer):
             msg.add_uint32(data['netid'])
         elif msgid == MessageTypes.player_input:
             msg.add_uint32(data['netid'])
-            msg.add_float32(data['heading_delta'])
             msg.add_int8(data['movement_x'])
-            msg.add_int8(data['movement_y'])
             msg.add_string(data['action_set'])
         else:
             raise RuntimeError("Unknown msgid:", msgid)
@@ -147,9 +145,7 @@ class PandaTransportLayer(BaseTransportLayer):
             data['netid'] = msg.get_uint32()
         elif msgid == MessageTypes.player_input:
             data['netid'] = msg.get_uint32()
-            data['heading_delta'] = msg.get_float32()
             data['movement_x'] = msg.get_int8()
-            data['movement_y'] = msg.get_int8()
             data['action_set'] = msg.get_string()
         else:
             RuntimeError("Unknown msgid:", msgid)

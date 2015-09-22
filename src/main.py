@@ -32,13 +32,13 @@ class Sigurd(ShowBase):
         light = p3d.DirectionalLight('sun')
         light.set_color(p3d.VBase4(1.0, 0.94, 0.84, 1.0))
         light_np = self.render.attach_new_node(light)
-        light_np.set_hpr(p3d.VBase3(-135.0, -45.0, 0.0))
+        light_np.set_hpr(p3d.VBase3(0, -45, 0))
         self.render.set_light(light_np)
 
         light = p3d.DirectionalLight('indirect')
         light.set_color(p3d.VBase4(0.15, 0.15, 0.15, 1.0))
         light_np = self.render.attach_new_node(light)
-        light_np.set_hpr(p3d.VBase3(45.0, 45.0, 0.0))
+        light_np.set_hpr(p3d.VBase3(0, 45, 0))
         self.render.set_light(light_np)
 
         if base.win:

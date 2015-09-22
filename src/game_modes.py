@@ -24,11 +24,7 @@ class ClassicGameMode(GameMode, DirectObject):
         self.action_set = set()
         self.movement = p3d.LVector3f(0, 0, 0)
 
-        self.camera_pivot = p3d.LVector3f(0, 0, 1.3)
-        self.camera_offset = p3d.LVector3f(0, 0.1, 0.17)
-        self.camera_pitch = 0
-        self.mousex_sensitivity = 25
-        self.mousey_sensitivity = 25
+        self.player_start_pos = p3d.LVector3f(0, 0, 0)
 
         def update_movement(direction, activate):
             move_delta = p3d.LVector3(0, 0, 0)
@@ -86,56 +82,48 @@ class ClassicGameMode(GameMode, DirectObject):
         spacenp.reparent_to(base.render)
 
         level = base.ecsmanager.create_entity()
-        np_component = NodePathComponent('models/new_level')
+        np_component = NodePathComponent('models/level2d')
         np_component.nodepath.reparent_to(spacenp)
         level.add_component(np_component)
+        player_start_node = np_component.nodepath.find('**/playerstart;+h-s+i')
+        if player_start_node:
+            player_start_node.hide()
+            self.player_start_pos = player_start_node.get_pos()
+        else:
+            print('Warning: No player start, using (0, 0, 0)')
+
 
         if base.network_manager.netrole == 'CLIENT':
+            base.camera.set_hpr(0, 0, 0)
+            base.camera.set_y(-30)
+            ortho_lens = p3d.OrthographicLens()
+            ortho_lens.set_film_size(35)
+            base.cam.node().set_lens(ortho_lens)
             base.network_manager.broadcast(network.MessageTypes.register_player, {})
 
+        # No enemies for now
         # Add some enemies
-        if base.network_manager.netrole == 'SERVER':
-            enemy_types = ('melee', 'ranged')
-            for i in range(2):
-                enemy = base.ecsmanager.create_entity()
-                base.network_manager.register_entity(enemy)
-                np_component = NodePathComponent()
-                np_component.nodepath.reparent_to(spacenp)
-                pos = (random.uniform(-6.5, 6.5), random.uniform(0.3, 7.6), 0)
-                np_component.nodepath.set_pos(*pos)
-                enemy.add_component(np_component)
-                enemy.add_component(CharacterComponent('melee', enemy_types[i]))
-                enemy.add_component(ActorComponent(enemy_types[i]))
-                enemy.add_component(HitBoxComponent())
-                enemy.add_component(WeaponComponent('katana'))
-                enemy.add_component(AiComponent())
+        #if base.network_manager.netrole == 'SERVER':
+        #    enemy_types = ('melee', 'ranged')
+        #    for i in range(2):
+        #        enemy = base.ecsmanager.create_entity()
+        #        base.network_manager.register_entity(enemy)
+        #        np_component = NodePathComponent()
+        #        np_component.nodepath.reparent_to(spacenp)
+        #        pos = (random.uniform(-6.5, 6.5), random.uniform(0.3, 7.6), 0)
+        #        np_component.nodepath.set_pos(*pos)
+        #        enemy.add_component(np_component)
+        #        enemy.add_component(CharacterComponent('melee', enemy_types[i]))
+        #        enemy.add_component(ActorComponent(enemy_types[i]))
+        #        enemy.add_component(HitBoxComponent())
+        #        enemy.add_component(WeaponComponent('katana'))
+        #        enemy.add_component(AiComponent())
 
     def update(self, dt):
         if self.player:
-            heading_delta = 0
-            if base.mouseWatcherNode.has_mouse():
-                mouse = base.mouseWatcherNode.get_mouse()
-                halfx = base.win.get_x_size() // 2
-                halfy = base.win.get_y_size() // 2
-                base.win.move_pointer(0, halfx, halfy)
-
-                self.camera_pitch += mouse.y * self.mousey_sensitivity
-                self.camera_pitch = clamp(self.camera_pitch, -70, 60)
-
-                heading_delta = -mouse.x * self.mousex_sensitivity
-
-            camera_mat = p3d.LMatrix4f().translate_mat(self.camera_offset)
-            rot_mat = p3d.LMatrix4f().rotate_mat(self.camera_pitch, p3d.LVector3f(1, 0, 0))
-            trans_mat = p3d.LMatrix4f().translate_mat(self.camera_pivot)
-
-            camera_mat = camera_mat * rot_mat * trans_mat
-            base.camera.set_mat(camera_mat)
-
             base.network_manager.broadcast(network.MessageTypes.player_input, {
                 'netid': self.player.netid,
-                'heading_delta': heading_delta,
                 'movement_x': int(self.movement.get_x()),
-                'movement_y': int(self.movement.get_y()),
                 'action_set': ','.join(self.action_set),
             })
             self.action_set.clear()
@@ -145,10 +133,6 @@ class ClassicGameMode(GameMode, DirectObject):
             if player_entity:
                 player_entity = player_entity[0]
                 np_component = player_entity.get_component('NODEPATH')
-                base.camera.reparent_to(np_component.nodepath)
-                base.camera.set_pos(0, 0, 1.7)
-                base.camLens.set_near(0.05)
-                base.camLens.set_far(100)
 
                 self.player = player_entity
 
@@ -163,9 +147,12 @@ class ClassicGameMode(GameMode, DirectObject):
                 np_component.nodepath.reparent_to(spacenp)
                 player.add_component(np_component)
                 player.add_component(CharacterComponent('melee'))
+                player.add_component(ActorComponent('melee'))
                 player.add_component(PlayerComponent())
-                player.add_component(WeaponComponent('katana'))
                 player.add_component(HitBoxComponent())
+
+                np_component.nodepath.set_pos(self.player_start_pos)
+                np_component.nodepath.set_h(-90)
 
                 base.network_manager.send_to(connection, network.MessageTypes.player_id, {
                     'netid': player.netid,
@@ -174,8 +161,7 @@ class ClassicGameMode(GameMode, DirectObject):
                 player_entity = [entity for entity in base.ecsmanager.entities if entity.netid == data['netid']]
                 if player_entity:
                     pc = player_entity[0].get_component('CHARACTER')
-                    pc.heading_delta += data['heading_delta']
-                    pc.movement = p3d.LVector3(data['movement_x'], data['movement_y'], 0)
+                    pc.movement = p3d.LVector3(data['movement_x'], 0, 0)
                     pc.action_set |= set(data['action_set'].split(','))
         else:
             if msgid == network.MessageTypes.player_id:

@@ -89,7 +89,6 @@ class CharacterComponent(ecs.UniqueComponent):
     __slots__ = [
         'speed',
         'movement',
-        'heading_delta',
         'mesh_name',
         '_chassis',
         'level',
@@ -110,7 +109,6 @@ class CharacterComponent(ecs.UniqueComponent):
     def __init__(self, chassis, mesh=None):
         super().__init__()
         self.movement = p3d.LVector3f(0, 0, 0)
-        self.heading_delta = 0
         self.mesh_name = mesh
 
         self.level = 1
@@ -251,20 +249,18 @@ class CharacterSystem(ecs.System):
                 actor.pose('idle', 0)
 
             # Position
-            ms = char.move_speed * dt / 50.0
-            char_speed = p3d.LVector3f(ms, ms, 0.0)
+            ms = char.move_speed * dt
+            char_speed = p3d.LVector3f(ms, 0, 0.0)
             if char.movement.length_squared() > 0.0:
-                new_pos = nodepath.getMat(base.render).xformVec(char.movement)
-                new_pos.normalize()
-                new_pos.componentwiseMult(char_speed)
-                new_pos += nodepath.get_pos()
-                nodepath.set_pos(new_pos)
+                delta = char.movement
+                delta.componentwise_mult(char_speed)
+                nodepath.set_pos(nodepath.get_pos() + delta)
+                nodepath.set_y(0)
+                if char.movement.get_x() > 0:
+                    nodepath.set_h(-90)
+                elif char.movement.get_x() < 0:
+                    nodepath.set_h(90)
                 char.action_set.discard('ATTACK_MOVE')
-
-            # Rotation
-            heading = nodepath.get_h() + char.heading_delta
-            nodepath.set_h(heading)
-            char.heading_delta = 0
 
             # Resolve attacks
             for attack in self._attack_queues[char.entity.guid]:
