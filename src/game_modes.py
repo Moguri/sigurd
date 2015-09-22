@@ -17,6 +17,24 @@ class GameMode(object):
     def is_game_over(self):
         pass
 
+
+class LevelData(object):
+    def __init__(self, level, parent):
+        # Load model and setup entity
+        self.entity = base.ecsmanager.create_entity()
+        np_component = NodePathComponent('models/level2d')
+        np_component.nodepath.reparent_to(parent)
+        self.entity.add_component(np_component)
+        player_start_nodes = np_component.nodepath.find_all_matches('**/playerstart;+h-s+i')
+
+        # Grab start positions
+        self.start_positions = []
+        for psn in player_start_nodes:
+            psn.hide()
+            self.start_positions.append(psn.get_pos())
+        else:
+            print('Warning: No player start, using (0, 0, 0)')
+
 class ClassicGameMode(GameMode, DirectObject):
     def __init__(self):
         self.player_id = None
@@ -24,7 +42,7 @@ class ClassicGameMode(GameMode, DirectObject):
         self.action_set = set()
         self.movement = p3d.LVector3f(0, 0, 0)
 
-        self.player_start_pos = p3d.LVector3f(0, 0, 0)
+        self.level_data = None
 
         def update_movement(direction, activate):
             move_delta = p3d.LVector3(0, 0, 0)
@@ -81,17 +99,7 @@ class ClassicGameMode(GameMode, DirectObject):
         spacenp = base.ecsmanager.space.get_component('NODEPATH').nodepath
         spacenp.reparent_to(base.render)
 
-        level = base.ecsmanager.create_entity()
-        np_component = NodePathComponent('models/level2d')
-        np_component.nodepath.reparent_to(spacenp)
-        level.add_component(np_component)
-        player_start_node = np_component.nodepath.find('**/playerstart;+h-s+i')
-        if player_start_node:
-            player_start_node.hide()
-            self.player_start_pos = player_start_node.get_pos()
-        else:
-            print('Warning: No player start, using (0, 0, 0)')
-
+        self.level_data = LevelData('models/level2d', spacenp)
 
         if base.network_manager.netrole == 'CLIENT':
             base.camera.set_hpr(0, 0, 0)
@@ -151,7 +159,7 @@ class ClassicGameMode(GameMode, DirectObject):
                 player.add_component(PlayerComponent())
                 player.add_component(HitBoxComponent())
 
-                np_component.nodepath.set_pos(self.player_start_pos)
+                np_component.nodepath.set_pos(random.choice(self.level_data.start_positions))
                 np_component.nodepath.set_h(-90)
 
                 base.network_manager.send_to(connection, network.MessageTypes.player_id, {
