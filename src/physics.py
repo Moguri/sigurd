@@ -43,13 +43,42 @@ class HitBoxComponent(ecs.Component):
         psys.physics_world.remove(self.physics_node)
 
 
+class StaticPhysicsMeshComponent(ecs.Component):
+    __slots__ = [
+        'physics_node',
+    ]
+    typeid = 'PHY_STATICMESH'
+
+    def __init__(self, geom, offset=p3d.LVector3f(0, 0, 0)):
+        super().__init__()
+
+        mesh = bullet.BulletTriangleMesh()
+        for i in range(geom.node().get_num_geoms()):
+            mesh.add_geom(geom.node().get_geom(i))
+        shape = bullet.BulletTriangleMeshShape(mesh, dynamic=False)
+
+        self.physics_node = bullet.BulletRigidBodyNode('StaticMesh')
+        xform_state = p3d.TransformState.make_pos(offset)
+        self.physics_node.add_shape(shape, xform_state)
+        self.physics_node.set_python_tag('component', self)
+
+    def cleanup(self):
+        self.physics_node.clear_python_tag('component')
+        psys = base.ecsmanager.get_system('PhysicsSystem')
+        psys.physics_world.remove(self.physics_node)
+
+
 class PhysicsSystem(ecs.System):
     __slots__ = [
         'physics_world',
     ]
 
+    component_types = [
+        'PHY_HITBOX',
+        'PHY_STATICMESH',
+    ]
+
     def __init__(self):
-        self.component_types = ['PHY_HITBOX']
         self.physics_world = bullet.BulletWorld()
 
         phydebug = bullet.BulletDebugNode('Physics Debug')
@@ -57,7 +86,7 @@ class PhysicsSystem(ecs.System):
         phydebug.show_bounding_boxes(True)
         phydebugnp = base.render.attach_new_node(phydebug)
         # Uncomment to show debug physics
-        # phydebugnp.show()
+        phydebugnp.show()
         self.physics_world.set_debug_node(phydebug)
 
         def update_physics(task):
@@ -71,6 +100,11 @@ class PhysicsSystem(ecs.System):
             np_component = hit_box.entity.get_component('NODEPATH')
             np_component.nodepath.attach_new_node(hit_box.physics_node)
             self.physics_world.attach(hit_box.physics_node)
+
+        for static_mesh in components.get('PHY_STATICMESH', []):
+            np_component = static_mesh.entity.get_component('NODEPATH')
+            np_component.nodepath.attach_new_node(static_mesh.physics_node)
+            self.physics_world.attach(static_mesh.physics_node)
 
     def ray_cast(self, from_pos, to_pos, all_hits=False, mask=None):
         hits = []

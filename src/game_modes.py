@@ -4,7 +4,7 @@ from direct.showbase.DirectObject import DirectObject
 
 import network
 from player import *
-from physics import HitBoxComponent
+from physics import HitBoxComponent, StaticPhysicsMeshComponent
 
 
 class GameMode(object):
@@ -23,17 +23,26 @@ class LevelData(object):
         # Load model and setup entity
         self.entity = base.ecsmanager.create_entity()
         np_component = NodePathComponent('models/level2d')
-        np_component.nodepath.reparent_to(parent)
+        nodepath = np_component.nodepath
+        nodepath.reparent_to(parent)
         self.entity.add_component(np_component)
-        player_start_nodes = np_component.nodepath.find_all_matches('**/playerstart;+h-s+i')
+        player_start_nodes = nodepath.find_all_matches('**/playerstart;+h-s+i')
 
         # Grab start positions
         self.start_positions = []
         for psn in player_start_nodes:
-            psn.hide()
             self.start_positions.append(psn.get_pos())
+            psn.remove_node()
         else:
             print('Warning: No player start, using (0, 0, 0)')
+
+        # Setup physic meshes
+        for geom_node in nodepath.find_all_matches('**/+GeomNode'):
+            geom_node.flatten_light()
+
+            smc = StaticPhysicsMeshComponent(geom_node, geom_node.get_pos())
+            self.entity.add_component(smc)
+
 
 class ClassicGameMode(GameMode, DirectObject):
     def __init__(self):
