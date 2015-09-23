@@ -33,8 +33,10 @@ class LevelData(object):
         for psn in player_start_nodes:
             self.start_positions.append(psn.get_pos())
             psn.remove_node()
-        else:
-            print('Warning: No player start, using (0, 0, 0)')
+
+        if not self.start_positions:
+            print('Warning: No player start, adding (0, 0, 0)')
+            self.start_positions.append(p3d.LVector3f(0, 0, 0))
 
         # Setup physic meshes
         for geom_node in nodepath.find_all_matches('**/+GeomNode'):
