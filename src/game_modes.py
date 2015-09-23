@@ -111,13 +111,14 @@ class ClassicGameMode(GameMode, DirectObject):
         spacenp.reparent_to(base.render)
 
         self.level_data = LevelData('models/level2d', spacenp)
-
-        if base.network_manager.netrole == 'CLIENT':
+        if base.camera:
             base.camera.set_hpr(0, 0, 0)
             base.camera.set_y(-30)
             ortho_lens = p3d.OrthographicLens()
             ortho_lens.set_film_size(35)
             base.cam.node().set_lens(ortho_lens)
+
+        if base.network_manager.netrole == 'CLIENT':
             base.network_manager.broadcast(network.MessageTypes.register_player, {})
 
         # No enemies for now
