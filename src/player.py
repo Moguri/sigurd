@@ -40,14 +40,14 @@ class NodePathComponent(ecs.Component):
     def serialize(self):
         d = super().serialize()
         d['modelpath'] = self._modelpath
-        d['position'] = list(self.nodepath.get_pos())
-        d['rotation'] = list(self.nodepath.get_hpr())
+        d['position'] = list(self.nodepath.get_pos(base.render))
+        d['rotation'] = list(self.nodepath.get_hpr(base.render))
 
         return d
 
     def update(self, cdata):
-        self.nodepath.set_pos(p3d.LVector3(*cdata['position']))
-        self.nodepath.set_hpr(p3d.LVector3(*cdata['rotation']))
+        self.nodepath.set_pos(base.render, p3d.LVector3(*cdata['position']))
+        self.nodepath.set_hpr(base.render, p3d.LVector3(*cdata['rotation']))
         self.nodepath.reparent_to(base.ecsmanager.space.get_component('NODEPATH').nodepath)
 
 
@@ -249,18 +249,23 @@ class CharacterSystem(ecs.System):
                 actor.pose('idle', 0)
 
             # Position
-            ms = char.move_speed * dt
+            ms = char.move_speed * dt / 2
             char_speed = p3d.LVector3f(ms, 0, 0.0)
+            delta = char.movement
+            delta.componentwise_mult(char_speed)
+            phys = char.entity.get_component('PHY_CHARACTER')
+            phys.physics_node.set_linear_movement(delta, is_local=False)
             if char.movement.length_squared() > 0.0:
-                delta = char.movement
-                delta.componentwise_mult(char_speed)
-                nodepath.set_pos(nodepath.get_pos() + delta)
-                nodepath.set_y(0)
                 if char.movement.get_x() > 0:
                     nodepath.set_h(-90)
                 elif char.movement.get_x() < 0:
                     nodepath.set_h(90)
                 char.action_set.discard('ATTACK_MOVE')
+
+            if 'JUMP' in char.action_set:
+                phys.physics_node.do_jump()
+                char.action_set.discard('JUMP')
+
 
             # Resolve attacks
             for attack in self._attack_queues[char.entity.guid]:

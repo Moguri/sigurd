@@ -4,7 +4,7 @@ from direct.showbase.DirectObject import DirectObject
 
 import network
 from player import *
-from physics import HitBoxComponent, StaticPhysicsMeshComponent
+from physics import HitBoxComponent, StaticPhysicsMeshComponent, CharacterPhysicsComponent
 
 
 class GameMode(object):
@@ -79,6 +79,7 @@ class ClassicGameMode(GameMode, DirectObject):
         self.accept('move-left-up', update_movement, ['left', False])
         self.accept('move-right', update_movement, ['right', True])
         self.accept('move-right-up', update_movement, ['right', False])
+        self.accept('jump', self.action_set.add, ['JUMP'])
         self.accept('attack', self.action_set.add, ['ATTACK'])
         self.accept('track-one', self.action_set.add, ['TRACK_ONE'])
         self.accept('track-two', self.action_set.add, ['TRACK_TWO'])
@@ -170,6 +171,7 @@ class ClassicGameMode(GameMode, DirectObject):
                 player.add_component(ActorComponent('melee'))
                 player.add_component(PlayerComponent())
                 player.add_component(HitBoxComponent())
+                player.add_component(CharacterPhysicsComponent())
 
                 np_component.nodepath.set_pos(random.choice(self.level_data.start_positions))
                 np_component.nodepath.set_h(-90)

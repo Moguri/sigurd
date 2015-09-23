@@ -68,6 +68,29 @@ class StaticPhysicsMeshComponent(ecs.Component):
         psys.physics_world.remove(self.physics_node)
 
 
+class CharacterPhysicsComponent(ecs.Component):
+    __slots__ = [
+        'physics_node',
+    ]
+    typeid = 'PHY_CHARACTER'
+
+    def __init__(self):
+        super().__init__()
+
+        height = 1.75
+        radius = 0.4
+        shape = bullet.BulletCapsuleShape(radius, height - 2 * radius, bullet.ZUp)
+
+        step_height = 0.4
+        self.physics_node = bullet.BulletCharacterControllerNode(shape, step_height, 'Character')
+        self.physics_node.set_python_tag('component', self)
+
+    def cleanup(self):
+        self.physics_node.clear_python_tag('component')
+        psys = base.ecsmanager.get_system('PhysicsSystem')
+        psys.physics_world.remove(self.physics_node)
+
+
 class PhysicsSystem(ecs.System):
     __slots__ = [
         'physics_world',
@@ -76,6 +99,7 @@ class PhysicsSystem(ecs.System):
     component_types = [
         'PHY_HITBOX',
         'PHY_STATICMESH',
+        'PHY_CHARACTER',
     ]
 
     def __init__(self):
@@ -86,7 +110,7 @@ class PhysicsSystem(ecs.System):
         phydebug.show_bounding_boxes(True)
         phydebugnp = base.render.attach_new_node(phydebug)
         # Uncomment to show debug physics
-        phydebugnp.show()
+        # phydebugnp.show()
         self.physics_world.set_debug_node(phydebug)
 
         def update_physics(task):
@@ -105,6 +129,16 @@ class PhysicsSystem(ecs.System):
             np_component = static_mesh.entity.get_component('NODEPATH')
             np_component.nodepath.attach_new_node(static_mesh.physics_node)
             self.physics_world.attach(static_mesh.physics_node)
+
+        for character in components.get('PHY_CHARACTER', []):
+            np = character.entity.get_component('NODEPATH').nodepath
+            char_np = np.get_parent().attach_new_node(character.physics_node)
+            char_np.set_pos(np.get_pos())
+            np.reparent_to(char_np)
+            np.set_pos(p3d.LVector3f(0, 0, -0.9))
+            self.physics_world.attach(character.physics_node)
+
+
 
     def ray_cast(self, from_pos, to_pos, all_hits=False, mask=None):
         hits = []
