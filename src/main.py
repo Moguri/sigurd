@@ -56,11 +56,11 @@ class Sigurd(ShowBase):
         self.ecsmanager.add_system(EffectSystem())
         self.ecsmanager.add_system(AiSystem())
 
-        port = int(sys.argv[2]) if len(sys.argv) >= 2 else 9999
-        host = sys.argv[3] if len(sys.argv) >= 3 else 'localhost'
+        port = int(sys.argv[2]) if len(sys.argv) > 2 else 9999
+        host = sys.argv[3] if len(sys.argv) > 3 else 'localhost'
         if len(sys.argv) == 1 or sys.argv[1] == 'stand-alone':
             is_server = False
-            proc = subprocess.Popen(['python', 'main.py', 'server', str(port), str(host)])
+            proc = subprocess.Popen([sys.argv[0], 'server', str(port), str(host)])
             def kill_server():
                 if proc:
                     print('Terminating stand-alone server')
@@ -69,6 +69,10 @@ class Sigurd(ShowBase):
             time.sleep(1)
         elif sys.argv[1] == 'server':
             is_server = True
+        elif sys.argv[1] == 'client':
+            is_server = False
+        else:
+            raise RuntimeError('Unrecognized mode: {}'.format(sys.argv[1]))
 
         self.network_manager = network.NetworkManager(self.ecsmanager, network.PandaTransportLayer, is_server)
         if is_server:
