@@ -69,6 +69,10 @@ class Sigurd(ShowBase):
             time.sleep(1)
         elif sys.argv[1] == 'server':
             is_server = True
+
+            # No need to run at full speed
+            globalClock.set_mode(p3d.ClockObject.MLimited)
+            globalClock.set_frame_rate(60)
         elif sys.argv[1] == 'client':
             is_server = False
         else:
