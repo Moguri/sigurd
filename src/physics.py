@@ -85,6 +85,9 @@ class CharacterPhysicsComponent(ecs.Component):
         self.physics_node = bullet.BulletCharacterControllerNode(shape, step_height, 'Character')
         self.physics_node.set_python_tag('component', self)
 
+        self.physics_node.set_jump_speed(30)
+        self.physics_node.set_gravity(98)
+
     def cleanup(self):
         self.physics_node.clear_python_tag('component')
         psys = base.ecsmanager.get_system('PhysicsSystem')
