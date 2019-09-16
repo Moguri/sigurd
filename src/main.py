@@ -60,7 +60,7 @@ class Sigurd(ShowBase):
         host = sys.argv[3] if len(sys.argv) > 3 else 'localhost'
         if len(sys.argv) == 1 or sys.argv[1] == 'stand-alone':
             is_server = False
-            proc = subprocess.Popen([sys.argv[0], 'server', str(port), str(host)])
+            proc = subprocess.Popen([sys.executable, sys.argv[0], 'server', str(port), str(host)])
             def kill_server():
                 if proc:
                     print('Terminating stand-alone server')
